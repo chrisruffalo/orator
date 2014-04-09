@@ -61,6 +61,12 @@
             <artifactId>jboss-servlet-api_3.0_spec</artifactId>
             <scope>provided</scope>
         </dependency>
+        
+        <dependency>
+    		<groupId>org.slf4j</groupId>
+    		<artifactId>slf4j-api</artifactId>
+		    <version>1.7.4</version>
+		</dependency>
 
     </dependencies>
 
