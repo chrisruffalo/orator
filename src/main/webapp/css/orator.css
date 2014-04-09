@@ -1,0 +1,14 @@
+body {
+  padding-top: 75px;
+}
+
+.login-well {
+	border-width: 1px;
+	border-color: #000000;
+	border-style: solid;
+	
+	padding-top: 25px;
+	padding-bottom: 25px;
+	
+	background: #dedede;	
+}
