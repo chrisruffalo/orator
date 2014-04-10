@@ -2,14 +2,40 @@ body {
   padding-top: 75px;
 }
 
-.login-well {
+/* Editing */
+.in-place-edit {
+	height: 30px;
+	font-size: 18px;
+	line-height: 30px;
+	border-bottom: 0px !important;
+}
+
+/* Segments */
+.login-well, .details-well {
 	border-width: 1px;
-	border-color: #000000;
+	border-color: #ebebeb;
 	border-style: solid;
-	border-radius: 13px;
 	
 	padding-top: 25px;
 	padding-bottom: 25px;
 	
-	background: #dedede;	
+	background: #f7f2f7;	
+}
+
+.details-well-first {
+	margin-right: 25px;
+}
+
+.details-info-well {
+	margin-bottom: 10px;
+}
+
+.details-well {
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+/* table headers */
+.orator-table-header {
+	background: #cdcdcd;
 }

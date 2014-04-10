@@ -9,16 +9,10 @@
 	<title>Orator | Login</title>
 	
 	<!-- Bootstrap core CSS -->
-	<link href="./thirdparty/css/bootstrap.min.css" rel="stylesheet">
+	<link href="${pageContext.request.contextPath}/thirdparty/css/bootstrap.min.css" rel="stylesheet">
 	
 	<!-- application css -->
-	<link href="./css/orator.css" rel="stylesheet">
-	
-	<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-	<!--[if lt IE 9]>
-	  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-	  <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-	<![endif]-->
+	<link href="${pageContext.request.contextPath}/css/orator.css" rel="stylesheet">
 </head>
 
 <body>
@@ -51,7 +45,7 @@
 			<div class="col-sm-offset-3 col-sm-6 main login-well">
 
 				<!-- login form -->
-				<form novalidate name="loginForm" role="form" method="POST" action="j_security_check">
+				<form novalidate name="loginForm" role="form" method="POST" action="">
 
 					<!-- form element row -->
 					<div class="row">
@@ -60,13 +54,13 @@
 							<!-- user name -->
 							<div class="form-group has-feedback">
 								<label for="loginName" class="control-label">User Name</label> <input
-									type="text" class="form-control" name="j_username" id="loginName" required placeholder="username">
+									type="text" class="form-control" name="username" id="loginName" required placeholder="username">
 							</div>
 
 							<!-- password -->
 							<div class="form-group has-feedback">
 								<label for="loginPassword" class="control-label">Password</label>
-								<input type="password" class="form-control" name="j_password" id="loginPassword" required placeholder="password">
+								<input type="password" class="form-control" name="password" id="loginPassword" required placeholder="password">
 							</div>
 						</div>
 					</div>
@@ -89,7 +83,7 @@
 	<!-- /.container -->
 
 	<!-- required third party libraries -->
-	<script src="./thirdparty/js/jquery-2.1.0.min.js"></script>
-	<script src="./thirdparty/js/bootstrap.min.js"></script>
+	<script src="${pageContext.request.contextPath}/thirdparty/js/jquery-2.1.0.min.js"></script>
+	<script src="${pageContext.request.contextPath}/thirdparty/js/bootstrap.min.js"></script>
 </body>
 </html>
