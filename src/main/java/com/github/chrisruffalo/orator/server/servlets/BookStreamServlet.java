@@ -21,8 +21,8 @@ import com.github.chrisruffalo.orator.server.servlets.support.BookStreamHandler;
 	description="orates books", 
 	name="oration", 
 	urlPatterns={
-		"/orate",
-		"/orate*"
+		"/services/secured/orate",
+		"/services/secured/orate*"
 	}
 )
 public class BookStreamServlet extends HttpServlet {

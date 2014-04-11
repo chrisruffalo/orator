@@ -3,8 +3,9 @@
 <html lang="en" ng-app="orator">
 	<head>
 		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	    <meta name="description" content="">
 		
 		<title>Orator</title>
 		
@@ -60,10 +61,12 @@
 		<script src="./thirdparty/js/bootstrap.min.js"></script>
 				
 		<!-- angular -->
+		<script src="./thirdparty/js/angular-file-upload-html5-shim.min.js"></script>
 		<script src="./thirdparty/js/angular-1.3.0-b5.min.js"></script>
 		<script src="./thirdparty/js/angular-1.3.0-b5-route.min.js"></script>
 		<script src="./thirdparty/js/angular-1.3.0-b5-resource.min.js"></script>
 		<script src="./thirdparty/js/angular-xeditable.min.js"></script>
+		<script src="./thirdparty/js/angular-file-upload.min.js"></script>
 				
 		<!-- orator shared logic -->
 		<script src="./app/js/orator.js"></script>

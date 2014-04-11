@@ -1,5 +1,5 @@
 // resource (REST Service) for use in other parts of the application
-orator.factory("Book", function ($resource) {
+orator.factory("Session", function ($resource) {
     return $resource('services/secured/reading/sessions', [],
     		{ 
 				// get single session

@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -84,6 +85,7 @@ public class AudioBookProvider {
 		// create id if it is missing
 		String id = book.getId();
 		if(id == null || id.isEmpty()) {
+			id = UUID.randomUUID().toString();
 			id = id.replaceAll("-", "");
 			id.toLowerCase();
 			book.setId(id);

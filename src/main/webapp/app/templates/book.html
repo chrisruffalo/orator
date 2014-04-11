@@ -11,76 +11,91 @@
 <!-- book properties -->
 <div class="row">
 
-	<div class="col-sm-8">
-		<div class="row">
-			<div class="col-sm-12 details-well details-info-well">
-				 <div class="row">
-				 	 <div class="col-xs-6">
-						 <div><a href="#" class="in-place-edit" editable-text="book.title">{{ book.title || 'New Book Title' }}</a></div>
-						 <div><a href="#" class="in-place-edit" editable-text="book.author">{{ book.author || 'New Book Author' }}</a></div>
-					 </div>
-				 	 <div class="col-xs-3">
-						Total Run Time: 30hr 3min 14sec
-					 </div>
-				 	 <div class="col-xs-3">
-						<button class="btn btn-small pull-right">start new reading session</button>
-					 </div>
+		<div class="col-sm-12 details-well details-info-well">
+			 <div class="row">
+			 	 <div class="col-sm-2 col-xs-4">
+			 	 	<img src="https://www.bc.edu/content/dam/files/schools/law_sites/library/jpg/RBR_items/TreeCalf.JPG" class="img-thumbnail">
+			 	 </div>
+			 	 <div class="col-sm-4 col-xs-8">
+					 <div><a href="#" class="in-place-edit" onaftersave="saveMetadata()" editable-text="book.title">{{book.title}}</a></div>
+					 <div><a href="#" class="in-place-edit" onaftersave="saveMetadata()" editable-text="book.author">{{book.author}}</a></div>
 				 </div>
-			</div>
-		
-			<div class="col-sm-12 details-well">
-				 <table class="table table-striped table-hover table-bordered table-condensed">
-				 	<thead>
-				 		<tr>
-						 	<th class="orator-table-header">
-						 		track
-						 	</th>
-						 	<th class="orator-table-header">
-						 		file name
-						 	</th>
-						 	<th class="orator-table-header">
-						 		duration
-						 	</th>
-						 	<th class="orator-table-header">
-						 		bitrate
-						 	</th>
-						 	<th class="orator-table-header">
-						 		<!-- controls -->
-						 	</th>
-					 	</tr>
-				 	</thead>
-				 	<tbody>
-				 		<tr>
-				 			<td>
-				 				1
-				 			</td>
-				 			<td>
-				 				some_file_name.mp3
-				 			</td>
-				 			<td>
-				 				2hr 3min 4sec
-				 			</td>
-				 			<td>
-				 				32kbps
-				 			</td>
-				 			<td>
-				 				<!-- controls -->
-				 			</td>
-				 		</tr>
-				 	</tbody>
-				 </table>
-				 <button class="btn btn-small pull-right hidden-print hidden-xs hidden-sm">+ add files</button>
-			</div>
+			 	 <div class="col-sm-4 col-xs-12 col-xs-offset-0">
+					<p>Total Run Time:</p>
+					<p>30hr 3min 14sec</p>
+				 </div>
+			 	 <div class="col-sm-2 col-xs-12 col-xs-offset-0">
+					<button ng-if="book.id" class="btn btn-small btn-primary pull-right">start new reading session</button>
+				 </div>
+			 </div>
 		</div>
-	</div>
-	
-	<div class="col-sm-4">
-		<div class="row">
-			<div class="col-sm-11 pull-right details-well">
-				<img src="https://www.bc.edu/content/dam/files/schools/law_sites/library/jpg/RBR_items/TreeCalf.JPG" class="img-thumbnail">
-			</div>
-		</div>		
-	</div>
-	
+</div>
+
+<div class="row">		
+		<div class="col-sm-12 details-well">
+			 <table ng-if="book.bookTracks" class="table table-striped table-hover table-bordered table-condensed">
+			 	<thead>
+			 		<tr>
+					 	<th class="orator-table-header">
+					 		track
+					 	</th>
+					 	<th class="orator-table-header">
+					 		file name
+					 	</th>
+					 	<th class="orator-table-header">
+					 		duration
+					 	</th>
+					 	<th class="orator-table-header">
+					 		bitrate
+					 	</th>
+					 	<th class="orator-table-header">
+					 		<!-- controls -->
+					 	</th>
+				 	</tr>
+			 	</thead>
+			 	<tbody ng-repeat="bookTrack in book.bookTracks">
+			 		<tr>
+			 			<td>
+			 				{{$index + 1}}
+			 			</td>
+			 			<td>
+			 				{{bookTrack.fileName}}
+			 			</td>
+			 			<td>
+			 				{{bookTrack.lengthSeconds}}
+			 			</td>
+			 			<td>
+			 				{{bookTrack.bitsPerSecond}}
+			 			</td>
+			 			<td>
+			 				<!-- controls -->
+			 			</td>
+			 		</tr>
+			 	</tbody>
+			 </table>
+			 
+			 <!-- file upload and controls, hidden on print small and extra small screens -->
+			 <div class="row hidden-print hidden-xs hidden-sm">
+			 	<div ng-if="state.fileUpload" class="col-sm-6">
+					<div>
+						 <span class="btn btn-default btn-file"><input type="file" ng-file-select="onFileSelect($files)" multiple accept=".mp3, .ogg, audio/mpeg3, audio/x-mpeg-3, audio/ogg" >Browse for Book Files...</span>
+						 <!-- 
+						 <div ng-file-drop="onFileSelect($files)" ng-file-drag-over-class="optional-css-class" ng-show="dropSupported">drop files here</div>
+						 <div ng-file-drop-available="dropSupported=true" ng-show="!dropSupported">HTML5 Drop File is not supported!</div>
+						 -->
+					</div>
+			 	</div>				
+			 	<div class="col-sm-6 pull-right">
+			 		<button class="btn btn-small btn-default pull-right " ng-if="book.id" ng-click="state.fileUpload = !state.fileUpload">{{state.fileUpload ? '- done' : '+ add files'}}</button>
+			 	</div> 
+			 	<div ng-if="state.fileUpload && book.id && fileStatus && fileStatus.length > 0" class="col-sm-12">
+			 		<dl class="dl-horizontal" ng-repeat="status in fileStatus">
+  						<dt>{{status.state}}:</dt>
+  						<dd><div class="progress"><div class="progress-bar" role="progressbar" aria-valuenow="{{status.percent}}" aria-valuemin="0" aria-valuemax="100" style="width: {{status.percent}}%;">{{status.file.name}} - {{status.percent}}%</div></div></dd>
+					</dl>
+			 	</div>
+			 </div>
+		</div>
+			
 	<!-- end -->
 </div>

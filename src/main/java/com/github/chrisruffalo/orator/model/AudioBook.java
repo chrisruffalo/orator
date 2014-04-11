@@ -14,7 +14,7 @@ public class AudioBook {
 	
 	private String owner;
 	
-	private List<BookFile> bookFiles;
+	private List<BookTrack> bookTracks;
 
 	public String getTitle() {
 		return title;
@@ -32,12 +32,12 @@ public class AudioBook {
 		this.author = author;
 	}
 
-	public List<BookFile> getBookFiles() {
-		return bookFiles;
+	public List<BookTrack> getBookTracks() {
+		return bookTracks;
 	}
 
-	public void setBookFiles(List<BookFile> bookFiles) {
-		this.bookFiles = bookFiles;
+	public void setBookTracks(List<BookTrack> bookTracks) {
+		this.bookTracks = bookTracks;
 	}
 
 	public String getId() {

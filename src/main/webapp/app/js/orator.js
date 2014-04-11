@@ -4,6 +4,7 @@ var orator = angular.module('orator',
 	 'ngResource', 				// json/ajax services
 	 'ngRoute', 				// application url router
 	 'xeditable', 				// edit values in-place
+	 'angularFileUpload'		// file upload
 	]
 );
 
@@ -17,17 +18,17 @@ orator.run(function(editableOptions, editableThemes) {
 orator.config(['$routeProvider',
     function($routeProvider) {
         $routeProvider.
-        when('/books', {
-            templateUrl: 'app/templates/books.html',
-            controller: 'BookTableController'
+	        when('/books', {
+	            templateUrl: 'app/templates/books.html',
+	            controller: 'BookTableController'
         }).
-        when('/book', {
-            templateUrl: 'app/templates/book.html',
-            controller: 'BookViewController'
+	        when('/book', {
+	            templateUrl: 'app/templates/book.html',
+	            controller: 'BookViewController'
         }).
-        when('/book/:id', {
-            templateUrl: 'app/templates/book.html',
-            controller: 'BookViewController'
+	        when('/book/:id', {
+	            templateUrl: 'app/templates/book.html',
+	            controller: 'BookViewController'
         }).
             when('/sessions', {
                 templateUrl: 'app/templates/sessions.html',
