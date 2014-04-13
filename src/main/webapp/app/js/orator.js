@@ -29,7 +29,8 @@ orator.config(function($stateProvider, $urlRouterProvider){
         templateUrl: 'app/templates/book.html',
         controller: 'BookViewController'
     })
-    // not sure if we need this state forever...
+    // not sure if we need this state forever... but it's here
+    // until we can get the parent/child state to work correctly...
     .state('newBook', {
         url: "/book",
         templateUrl: 'app/templates/book.html',
