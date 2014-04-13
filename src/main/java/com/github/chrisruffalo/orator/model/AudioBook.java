@@ -1,6 +1,9 @@
 package com.github.chrisruffalo.orator.model;
 
+import java.util.LinkedList;
 import java.util.List;
+
+import com.google.gson.annotations.Expose;
 
 public class AudioBook {
 
@@ -14,7 +17,12 @@ public class AudioBook {
 	
 	private String owner;
 	
+	@Expose
 	private List<BookTrack> bookTracks;
+	
+	public AudioBook() {
+		this.bookTracks = new LinkedList<BookTrack>();
+	}
 
 	public String getTitle() {
 		return title;

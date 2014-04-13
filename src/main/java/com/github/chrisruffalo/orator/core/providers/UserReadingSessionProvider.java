@@ -19,6 +19,7 @@ import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 
 import com.github.chrisruffalo.eeconfig.annotations.Logging;
+import com.github.chrisruffalo.orator.core.util.IdUtil;
 import com.github.chrisruffalo.orator.model.AudioBook;
 import com.github.chrisruffalo.orator.model.ReadingSession;
 import com.google.gson.Gson;
@@ -78,9 +79,7 @@ public class UserReadingSessionProvider {
 		}
 		
 		// create id
-		String id = UUID.randomUUID().toString();
-		id = id.replaceAll("-", "");
-		id.toLowerCase();
+		String id = IdUtil.get();
 
 		// get username
 		String userName = this.subject.getPrincipal().toString();

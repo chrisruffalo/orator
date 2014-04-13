@@ -1,4 +1,4 @@
-orator.controller('BookViewController', function ($scope, $routeParams, $http, $upload, $timeout, Books) {
+orator.controller('BookViewController', function ($scope, $state, $stateParams, $http, $upload, $timeout, Books) {
 	// state variables
 	$scope.state = {};
 	$scope.state.fileUpload = false;
@@ -8,7 +8,7 @@ orator.controller('BookViewController', function ($scope, $routeParams, $http, $
 	
 	// handle loading/finding of book
 	$scope.load = function(id) {
-		// set initial values
+		// set initial value for scope object
 		$scope.book = null;
 
 		// bootstrap from existing configuration
@@ -22,7 +22,10 @@ orator.controller('BookViewController', function ($scope, $routeParams, $http, $
 				author: 'New Book Author'
 			},
 			function() {
+				// save book to local scope
 				$scope.book = book;
+				// update location bar/state with new book id
+				$state.go('book', {bookId: book.id}, {location: "replace"});
 			});
 		}		
 	};
@@ -32,22 +35,33 @@ orator.controller('BookViewController', function ($scope, $routeParams, $http, $
 	    //$files: an array of files selected, each file has name, size, and type.
 	    for (var i = 0; i < $files.length; i++) {
 	      var file = $files[i];
-	      var status = {'file': file, 'state': 'starting'};
-	      $scope.fileStatus.push(status); 
-	      $scope.upload = $upload.upload({
-	        url: 'services/secured/bookUpload', //upload.php script, node.js route, or servlet url
-	        // send book id as value
-	        data: {bookId: $scope.book.id},
-	        file: file, // or list of files: $files for html5 only
+	      var currentUploadStatus = {
+	    	  'file': file, 
+	    	  'state': 'starting', 
+	    	  'show': true,
+	    	  'errorMessage': null
+	      };
+	      $scope.fileStatus.push(currentUploadStatus); 
+	      currentUploadStatus.upload = $upload.upload({
+	    	  // call book upload with bookId as parameter (tried using the data block but it made the servlet MUCH more complicated)
+			  url: 'services/secured/audioBookUpload?bookId=' + $scope.book.id,
+			  // send book id as value
+			  // data: {bookId: $scope.book.id},
+  			  file: file, // or list of files: $files for html5 only
 	      }).progress(function(evt) {
-	        status.percent = parseInt(100.0 * evt.loaded / evt.total);
-	        status.state = 'uploading';
-	        status.event = evt;
-	        console.dir(file);
-	      }).success(function(data, status, headers, config) {
-	        status.percent = 100;
-	        status.state = 'complete';
-	        // todo: start removal timeout
+			  currentUploadStatus.percent = parseInt(100.0 * evt.loaded / evt.total);
+			  if(currentUploadStatus.percent >= 100) {
+				  currentUploadStatus.state = 'complete';
+			  } else {
+				  currentUploadStatus.state = 'uploading';
+			  }
+		  }).success(function(data, status, headers, config) {
+	    	currentUploadStatus.percent = 100;
+	    	currentUploadStatus.state = 'complete';
+        	$scope.deferedLoad($scope.book.id);	    	
+	    	currentUploadStatus.removal = $timeout(function() {
+	        	$scope.removeFileStatus(currentUploadStatus);	  
+	        }, 180000); // wait 3 minutes until removal
 	      });
 	      //.error(...)
 	      //.then(success, error, progress); 
@@ -55,16 +69,41 @@ orator.controller('BookViewController', function ($scope, $routeParams, $http, $
 	    }
 	};
 	
+	// acknowledge/remove status line
+	$scope.removeFileStatus = function(uploadStatus) {
+		if(uploadStatus.removal) {
+			$timeout.cancel(uploadStatus.removal);
+		}
+		uploadStatus.show = false;
+	};
+	
+	// abort individual file upload
+	$scope.abortUpload = function(uploadStatus) {
+		uploadStatus.upload.abort();
+	};
+	
+	$scope.deferedLoad = function(id) {
+		// cancel timer
+		if($scope.deferLoadTimer) {
+			$timeout.cancel($scope.deferLoadTimer);
+		}
+		
+		// try and load
+		$scope.deferLoadTimer = $timeout(function(){
+			$scope.load(id);
+		}, 1000); // wait 200ms to see if something else changes before doing it
+	};
+	
 	// save
 	$scope.saveMetadata = function() {
 		// if already counting down to save, cancel countdown in favor of
 		// counting down for new model
 		if($scope.saveMetadataTimer) {
-			clearTimeout($scope.saveMetadataTimer);
+			$timeout.cancel($scope.saveMetadataTimer);
 		}
 		
 		// start countdown to save
-		$scope.saveMetadataTimer = setTimeout(function() {
+		$scope.saveMetadataTimer = $timeout(function() {
 			// save (and update state)
 			$scope.state.saving = true;
 			var saveBook = new Books($scope.book);
@@ -75,5 +114,6 @@ orator.controller('BookViewController', function ($scope, $routeParams, $http, $
 	};
 	
 	// load from route params
-	$scope.load($routeParams.id);	
+	console.dir($stateParams);
+	$scope.load($stateParams.bookId);	
 });

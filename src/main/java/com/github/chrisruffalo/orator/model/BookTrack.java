@@ -2,7 +2,11 @@ package com.github.chrisruffalo.orator.model;
 
 public class BookTrack {
 
+	private String id;
+	
 	private String fileName;
+	
+	private String path;
 	
 	private long bitsPerSecond;
 	
@@ -41,4 +45,21 @@ public class BookTrack {
 	public void setLengthSeconds(int lengthSeconds) {
 		this.lengthSeconds = lengthSeconds;
 	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+	
 }

@@ -10,8 +10,7 @@
 
 <!-- book properties -->
 <div class="row">
-
-		<div class="col-sm-12 details-well details-info-well">
+		<div class="col-sm-12 details-well col-push-down">
 			 <div class="row">
 			 	 <div class="col-sm-2 col-xs-4">
 			 	 	<img src="https://www.bc.edu/content/dam/files/schools/law_sites/library/jpg/RBR_items/TreeCalf.JPG" class="img-thumbnail">
@@ -53,8 +52,8 @@
 					 	</th>
 				 	</tr>
 			 	</thead>
-			 	<tbody ng-repeat="bookTrack in book.bookTracks">
-			 		<tr>
+			 	<tbody>
+			 		<tr ng-repeat="bookTrack in book.bookTracks">
 			 			<td>
 			 				{{$index + 1}}
 			 			</td>
@@ -76,23 +75,35 @@
 			 
 			 <!-- file upload and controls, hidden on print small and extra small screens -->
 			 <div class="row hidden-print hidden-xs hidden-sm">
-			 	<div ng-if="state.fileUpload" class="col-sm-6">
+			 	<div ng-if="state.fileUpload" class="col-sm-6 col-push-down">
 					<div>
 						 <span class="btn btn-default btn-file"><input type="file" ng-file-select="onFileSelect($files)" multiple accept=".mp3, .ogg, audio/mpeg3, audio/x-mpeg-3, audio/ogg" >Browse for Book Files...</span>
-						 <!-- 
-						 <div ng-file-drop="onFileSelect($files)" ng-file-drag-over-class="optional-css-class" ng-show="dropSupported">drop files here</div>
-						 <div ng-file-drop-available="dropSupported=true" ng-show="!dropSupported">HTML5 Drop File is not supported!</div>
-						 -->
 					</div>
 			 	</div>				
 			 	<div class="col-sm-6 pull-right">
 			 		<button class="btn btn-small btn-default pull-right " ng-if="book.id" ng-click="state.fileUpload = !state.fileUpload">{{state.fileUpload ? '- done' : '+ add files'}}</button>
 			 	</div> 
 			 	<div ng-if="state.fileUpload && book.id && fileStatus && fileStatus.length > 0" class="col-sm-12">
-			 		<dl class="dl-horizontal" ng-repeat="status in fileStatus">
-  						<dt>{{status.state}}:</dt>
-  						<dd><div class="progress"><div class="progress-bar" role="progressbar" aria-valuenow="{{status.percent}}" aria-valuemin="0" aria-valuemax="100" style="width: {{status.percent}}%;">{{status.file.name}} - {{status.percent}}%</div></div></dd>
-					</dl>
+			 		<table class="table">
+			 			<tbody>
+			 				<tr ng-if="status.show" ng-repeat="status in fileStatus">
+			 					<td class="col-sm-4">{{status.file.name}}</td>
+			 					<td class="col-sm-1">{{status.state}}</td>			 					
+			 					<td class="col-sm-5">
+			 						<div ng-if="'error' != status.state" class="progress">
+			 							<div class="progress-bar" role="progressbar" aria-valuenow="{{status.percent}}" aria-valuemin="0" aria-valuemax="100" style="width: {{status.percent}}%;">{{status.percent}}%</div>
+			 						</div>
+			 						<div ng-if="'error' == status.state && status.errorMessage">
+			 							<p>Error: {{status.errorMessage}} 
+			 						</div>
+			 					</td>
+			 					<td class="col-sm-1">
+			 						<button ng-click="abortUpload(status)" ng-if="status.state == 'uploading'" class="btn btn-xs btn-danger pull-right">cancel</button>
+			 						<button ng-click="removeFileStatus(status)" ng-if="status.state == 'complete' || status.state == 'error'" class="btn btn-xs btn-default pull-right">done</button>
+			 					</td>
+			 				</tr>
+			 			</tbody>
+			 		</table>
 			 	</div>
 			 </div>
 		</div>

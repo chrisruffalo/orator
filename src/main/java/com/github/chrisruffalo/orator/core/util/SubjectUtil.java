@@ -14,4 +14,11 @@ public final class SubjectUtil {
 		return subject != null && subject.getPrincipal() != null && Objects.equal(username, subject.getPrincipal());
 	}
 	
+	public static String name(Subject subject) {
+		if(subject == null || subject.getPrincipal() == null) {
+			return null;
+		}
+		return subject.getPrincipal().toString();
+	}
+	
 }

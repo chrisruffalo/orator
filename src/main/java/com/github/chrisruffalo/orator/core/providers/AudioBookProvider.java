@@ -2,6 +2,7 @@ package com.github.chrisruffalo.orator.core.providers;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
@@ -10,7 +11,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -21,10 +21,14 @@ import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 
 import com.github.chrisruffalo.eeconfig.annotations.Logging;
+import com.github.chrisruffalo.orator.core.util.IdUtil;
 import com.github.chrisruffalo.orator.core.util.PathUtil;
 import com.github.chrisruffalo.orator.core.util.SubjectUtil;
+import com.github.chrisruffalo.orator.exceptions.OratorRuntimeException;
 import com.github.chrisruffalo.orator.model.AudioBook;
+import com.github.chrisruffalo.orator.model.BookTrack;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @ApplicationScoped
 public class AudioBookProvider {
@@ -75,8 +79,7 @@ public class AudioBookProvider {
 		}
 	}
 	
-	public AudioBook saveBook(AudioBook book) {
-		
+	public AudioBook saveBook(AudioBook book, boolean updateTracks) {
 		// do nothing
 		if(book == null) {
 			return book;
@@ -85,21 +88,23 @@ public class AudioBookProvider {
 		// create id if it is missing
 		String id = book.getId();
 		if(id == null || id.isEmpty()) {
-			id = UUID.randomUUID().toString();
-			id = id.replaceAll("-", "");
-			id.toLowerCase();
+			id = IdUtil.get();
 			book.setId(id);
 		}
 
+		// update username if it doesn't exist
+		String exsistingUserName = book.getOwner();
 		// get username
-		String userName = this.subject.getPrincipal().toString();
+		String userName = SubjectUtil.name(this.subject);
+		if(exsistingUserName == null || exsistingUserName.isEmpty()) {
+			book.setOwner(userName);
+		} else if(book.isHidden() && !SubjectUtil.is(this.subject, exsistingUserName)) {
+			throw new OratorRuntimeException("User " + userName + " cannot save a HIDDEN book that belongs to user " + exsistingUserName);
+		}
 
 		// go to books dir
-		String homePath = this.configuration.getString(ConfigurationProvider.KEY_HOME_DIR, ConfigurationProvider.DEFAULT_HOME_DIR);
-		Path path = Paths.get(homePath, AudioBookProvider.BOOKS_PATH);
-		Path bookPath = path.resolve(id);
-		bookPath = PathUtil.getDirectoryPath("books", bookPath);
-		
+		Path bookPath = this.getBookPath(id);
+
 		// look for file
 		Path bookDescriptor = bookPath.resolve("book.json");
 		try {
@@ -111,14 +116,22 @@ public class AudioBookProvider {
 		
 		// save book to file
 		try (BufferedWriter writer = Files.newBufferedWriter(bookDescriptor, Charset.defaultCharset())) {
-			Gson gson = new Gson();
+			GsonBuilder builder = new GsonBuilder();
+			if(!updateTracks) {
+				builder.excludeFieldsWithoutExposeAnnotation();
+			}				
+			Gson gson = builder.create();
 			gson.toJson(book, writer);
 		} catch (IOException e) {
 			this.logger.error("Error while saving book for user '{}': {}", userName, e.getMessage());
 			throw new WebApplicationException(500);
 		}
-		
+
 		return book;
+	}
+	
+	public AudioBook saveBook(AudioBook book) {
+		return this.saveBook(book, true);
 	}
 	
 	public List<AudioBook> getBooks() {
@@ -150,6 +163,43 @@ public class AudioBookProvider {
 		}
 		
 		return bookList;
+	}
+	
+	public boolean addBookTrack(String id, String fileName, String contentType, InputStream bookFileStream) {
+		
+		AudioBook book = this.getBook(id);
+		
+		if(fileName == null || fileName.isEmpty()) {
+			return false;
+		}
+		
+		BookTrack track = new BookTrack();
+		String trackId = IdUtil.get();
+		
+		//set metadata
+		track.setId(trackId);
+		track.setFileName(fileName);
+		track.setPath(id + "_" + fileName);
+		
+		// write book to  book path
+		
+		
+		// save metadata
+		book.getBookTracks().add(track);
+		
+		// save
+		this.saveBook(book);
+		
+		return true;
+	}
+	
+	private Path getBookPath(String bookId) {
+		String homePath = this.configuration.getString(ConfigurationProvider.KEY_HOME_DIR, ConfigurationProvider.DEFAULT_HOME_DIR);
+		Path path = Paths.get(homePath, AudioBookProvider.BOOKS_PATH);
+		Path bookPath = path.resolve(bookId);
+		bookPath = PathUtil.getDirectoryPath("books", bookPath);
+		bookPath = bookPath.normalize();
+		return bookPath;
 	}
 	
 }
