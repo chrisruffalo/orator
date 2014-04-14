@@ -71,7 +71,7 @@ public class AudioBookUploadServlet extends HttpServlet {
 						String contentType = item.getContentType();
 						if(bookStream != null) {						
 							// add book track to book
-							this.provider.addBookTrack(bookId, fileName, contentType, item.openStream());
+							this.provider.addBookTrack(bookId, fileName, contentType, bookStream);
 						}
 					} 					
 				}

@@ -8,11 +8,13 @@ public class BookTrack {
 	
 	private String path;
 	
+	private String contentType;
+	
 	private long bitsPerSecond;
 	
 	private long bytesSize;
 	
-	private int lengthSeconds;
+	private long lengthSeconds;
 
 	public String getFileName() {
 		return fileName;
@@ -38,11 +40,11 @@ public class BookTrack {
 		this.bytesSize = bytesSize;
 	}
 
-	public int getLengthSeconds() {
+	public long getLengthSeconds() {
 		return lengthSeconds;
 	}
 
-	public void setLengthSeconds(int lengthSeconds) {
+	public void setLengthSeconds(long lengthSeconds) {
 		this.lengthSeconds = lengthSeconds;
 	}
 
@@ -61,5 +63,14 @@ public class BookTrack {
 	public void setPath(String path) {
 		this.path = path;
 	}
+
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+	
 	
 }

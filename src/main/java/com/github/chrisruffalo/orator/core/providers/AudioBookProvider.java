@@ -3,6 +3,7 @@ package com.github.chrisruffalo.orator.core.providers;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
@@ -21,12 +22,14 @@ import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 
 import com.github.chrisruffalo.eeconfig.annotations.Logging;
+import com.github.chrisruffalo.orator.core.util.AudioMetadataUtil;
 import com.github.chrisruffalo.orator.core.util.IdUtil;
 import com.github.chrisruffalo.orator.core.util.PathUtil;
 import com.github.chrisruffalo.orator.core.util.SubjectUtil;
 import com.github.chrisruffalo.orator.exceptions.OratorRuntimeException;
 import com.github.chrisruffalo.orator.model.AudioBook;
 import com.github.chrisruffalo.orator.model.BookTrack;
+import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -165,29 +168,58 @@ public class AudioBookProvider {
 		return bookList;
 	}
 	
-	public boolean addBookTrack(String id, String fileName, String contentType, InputStream bookFileStream) {
+	public boolean addBookTrack(String bookId, String fileName, String contentType, InputStream bookFileStream) {
 		
-		AudioBook book = this.getBook(id);
+		AudioBook book = this.getBook(bookId);
 		
 		if(fileName == null || fileName.isEmpty()) {
 			return false;
 		}
 		
+		// create new track
 		BookTrack track = new BookTrack();
 		String trackId = IdUtil.get();
 		
 		//set metadata
 		track.setId(trackId);
 		track.setFileName(fileName);
-		track.setPath(id + "_" + fileName);
+		track.setPath(trackId + "_" + fileName); // we do this to prevent future name conflicts.  the file name never changes.
+		track.setContentType(contentType);
 		
 		// write book to  book path
+		Path bookPath = this.getBookPath(bookId);
+		Path filePath = bookPath.resolve(track.getPath());
 		
+		// write file
+		try(OutputStream output = Files.newOutputStream(filePath)) {
+			ByteStreams.copy(bookFileStream, output);
+		} catch (IOException e) {
+			this.logger.warn("Could not write file: {} (reason: {})", filePath.toString(), e.getLocalizedMessage());
+					
+			// delete, the act of opening the stream creates the file 
+			try {
+				Files.deleteIfExists(filePath);
+			} catch (IOException e1) {
+				// it doesn't matter
+			}
+			return false;
+		}
 		
-		// save metadata
+		// process metadata (and set it)
+		AudioMetadataUtil.metadata(track, filePath);
+		
+		// file size
+		try {
+			track.setBytesSize(Files.size(filePath));
+		} catch (IOException e) {
+			// what do?
+			e.printStackTrace();
+		}
+		
+		// add track to book
 		book.getBookTracks().add(track);
 		
-		// save
+		// save book metadata once everything else is successful
 		this.saveBook(book);
 		
 		return true;

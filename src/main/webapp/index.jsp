@@ -71,8 +71,13 @@
 		<!-- angular ui components -->
 		<script src="./thirdparty/js/angular-ui-router.min.js"></script>
 				
-		<!-- orator shared logic -->
+		<!-- orator utilities -->
+		<script src="./app/js/util/util.js"></script>
+		<script src="./app/js/util/pretty.js"></script>
+				
+		<!-- orator shared angular/application logic -->
 		<script src="./app/js/orator.js"></script>
+		<script src="./app/js/directives/format.js"></script>
 		<script src="./app/js/services/books.service.js"></script>
 		<script src="./app/js/services/sessions.service.js"></script>
 		

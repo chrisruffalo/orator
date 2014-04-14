@@ -61,10 +61,10 @@
 			 				{{bookTrack.fileName}}
 			 			</td>
 			 			<td>
-			 				{{bookTrack.lengthSeconds}}
+			 				{{bookTrack.lengthSeconds | orator.seconds}}
 			 			</td>
 			 			<td>
-			 				{{bookTrack.bitsPerSecond}}
+			 				{{bookTrack.bitsPerSecond | orator.bps}}
 			 			</td>
 			 			<td>
 			 				<!-- controls -->
