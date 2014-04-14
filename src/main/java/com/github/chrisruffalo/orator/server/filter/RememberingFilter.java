@@ -7,7 +7,6 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 
 public class RememberingFilter extends FormAuthenticationFilter {
-
 	
 	/**
 	 * {@inheritDoc}

@@ -7,21 +7,27 @@ import com.google.gson.annotations.Expose;
 
 public class AudioBook {
 
+	@Expose
 	private String id;
 	
+	@Expose
 	private String title;
 	
+	@Expose
 	private String author;
 	
+	@Expose
 	private boolean hidden;
 	
+	@Expose
 	private long time;
 	
+	@Expose
 	private long size;
 	
+	@Expose
 	private String owner;
 	
-	@Expose
 	private List<BookTrack> bookTracks;
 	
 	public AudioBook() {
@@ -101,6 +107,19 @@ public class AudioBook {
 		}
 		this.time = time;
 		this.size = size;
+	}
+
+	public BookTrack getBookTrack(String trackId) {
+		if(trackId == null || trackId.isEmpty()) {
+			return null;
+		}
+		
+		for(BookTrack track : this.bookTracks) {
+			if(trackId.equalsIgnoreCase(track.getId())) {
+				return track;
+			}
+		}
+		return null;
 	}
 
 }

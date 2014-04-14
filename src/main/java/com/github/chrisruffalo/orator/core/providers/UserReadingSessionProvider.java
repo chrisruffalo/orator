@@ -22,6 +22,7 @@ import com.github.chrisruffalo.orator.core.util.IdUtil;
 import com.github.chrisruffalo.orator.model.AudioBook;
 import com.github.chrisruffalo.orator.model.ReadingSession;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 @RequestScoped
@@ -49,7 +50,8 @@ public class UserReadingSessionProvider {
 		DirectoryStream.Filter<Path> jsonFileFilter = new DirectoryStream.Filter<Path>() {
 			@Override
 			public boolean accept(Path entry) throws IOException {
-				return Files.isRegularFile(entry) && entry.endsWith(".json");
+				boolean accept = Files.isRegularFile(entry) && entry.toString().endsWith(".json");
+				return accept;
 			}		
 		};
 		
@@ -80,6 +82,8 @@ public class UserReadingSessionProvider {
 		// create id
 		String id = IdUtil.get();
 
+		this.logger.trace("Starting new session: {}", id);
+		
 		// get username
 		String userName = this.subject.getPrincipal().toString();
 		
@@ -91,18 +95,42 @@ public class UserReadingSessionProvider {
 		session.setSecondsOffset(0);
 		session.setSessionName("New Session");
 		
-		// write session to file
+		// write session
+		this.write(session);
+					
+		return session;
+	}
+	
+	private void write(ReadingSession session) {
+		// get username
+		String userName = this.subject.getPrincipal().toString();
+		
+		// get id
+		String id = session.getId();
+		
+		// get target session file for writing
 		Path toSessions = this.reading.getUserSessionDir(userName);
 		Path sessionPath = toSessions.resolve("session-" + id + ".json");
+		
+		try {
+			Files.deleteIfExists(sessionPath);
+		} catch (IOException e1) {
+			// warn?
+		}
+		
+		// write session to file
 		try (BufferedWriter writer = Files.newBufferedWriter(sessionPath, Charset.defaultCharset())) {
-			Gson gson = new Gson();
+			GsonBuilder builder = new GsonBuilder();
+			builder.excludeFieldsWithoutExposeAnnotation();
+			Gson gson = builder.create();
 			gson.toJson(session, writer);
+			writer.flush();
+			
+			this.logger.trace("wrote session to file: {}", sessionPath);
 		} catch (IOException e) {
 			this.logger.error("Error while writing new session for user '{}': {}", userName, e.getMessage());
 			throw new WebApplicationException(500);
-		}		
-		
-		return session;
+		}
 	}
 	
 	public boolean lockSession(String id) {
@@ -148,9 +176,16 @@ public class UserReadingSessionProvider {
 	}
 	
 	private ReadingSession getSession(Path sessionPath) {
+		this.logger.trace("reading session from: {}", sessionPath.toAbsolutePath());
+		
 		try(Reader reader = Files.newBufferedReader(sessionPath, Charset.defaultCharset())){
 			Gson gson = new Gson();
 			ReadingSession session = gson.fromJson(reader, ReadingSession.class);
+			String bookId = session.getBookId();
+			if(bookId != null && !bookId.isEmpty()) {
+				AudioBook book = books.getBook(bookId);
+				session.setBook(book);
+			}
 			return session;
 		} catch (JsonSyntaxException jsex) { 
 			// warn

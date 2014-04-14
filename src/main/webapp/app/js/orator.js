@@ -3,9 +3,9 @@ var orator = angular.module('orator',
 	[
 	 'ui.router',				// enhanced url router
 	 'ngResource', 				// json/ajax services
-	 //'ngRoute', 				// application url router
 	 'xeditable', 				// edit values in-place
-	 'angularFileUpload'		// file upload
+	 'angularFileUpload',		// file upload
+	 'mediaPlayer'				// plays audio (and video, but no need)
 	]
 );
 
@@ -20,10 +20,27 @@ orator.run(function(editableOptions, editableThemes) {
 orator.config(function($stateProvider, $urlRouterProvider){
 	
 	// set default
-	$urlRouterProvider.otherwise("/books");
+	$urlRouterProvider.otherwise("/sessions");
 	
 	// set up routes
 	$stateProvider
+	.state('sessions', {
+		url: '/sessions',
+		templateUrl: 'app/templates/sessions.html',
+		controller: 'SessionTableController'
+	})
+	.state('session', {
+        url: '/session/:sessionId',
+        templateUrl: 'app/templates/session.html',
+        controller: 'SessionViewController'
+    })
+    // not sure if we need this state forever... but it's here
+    // until we can get the parent/child state to work correctly...
+    .state('start-session', {
+        url: '/start-session/:bookId',
+        templateUrl: 'app/templates/session.html',
+        controller: 'SessionViewController'
+    })
 	.state('books', {
 		url: '/books',
 		templateUrl: 'app/templates/books.html',
@@ -36,7 +53,7 @@ orator.config(function($stateProvider, $urlRouterProvider){
     })
     // not sure if we need this state forever... but it's here
     // until we can get the parent/child state to work correctly...
-    .state('newBook', {
+    .state('new-book', {
         url: '/book',
         templateUrl: 'app/templates/book.html',
         controller: 'BookViewController'

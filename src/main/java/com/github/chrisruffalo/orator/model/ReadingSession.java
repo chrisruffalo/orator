@@ -1,16 +1,25 @@
 package com.github.chrisruffalo.orator.model;
 
+import com.google.gson.annotations.Expose;
+
 public class ReadingSession {
 
+	@Expose
 	private String id;
 	
+	@Expose
 	private String bookId;
 	
+	@Expose
 	private String sessionName;
 	
+	@Expose
 	private long secondsOffset;
 	
+	@Expose
 	private String owner;
+	
+	private AudioBook book;
 
 	public String getId() {
 		return id;
@@ -35,7 +44,7 @@ public class ReadingSession {
 	public void setSecondsOffset(long secondsOffset) {
 		this.secondsOffset = secondsOffset;
 	}
-
+	
 	public String getOwner() {
 		return owner;
 	}
@@ -50,6 +59,13 @@ public class ReadingSession {
 
 	public void setBookId(String bookId) {
 		this.bookId = bookId;
+	}
+
+	public AudioBook getBook() {
+		return book;
+	}
+
+	public void setBook(AudioBook book) {
+		this.book = book;
 	}	
-	
 }

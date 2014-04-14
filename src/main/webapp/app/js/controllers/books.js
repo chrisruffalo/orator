@@ -1,6 +1,13 @@
-orator.controller('BookTableController', function ($scope, $state, $http, $timeout, Books) {
+orator.controller('BookTableController', function ($rootScope, $scope, $state, $http, $timeout, Books) {
 	// no books
 	$scope.books = null;
+	
+	// when state changes, cancel timer
+	$rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
+		if($scope.updateTimer) {
+			$timeout.cancel($scope.updateTimer);
+		}
+	});
 		
 	// periodic update
 	$scope.updatePeriodic = function() {
@@ -28,6 +35,10 @@ orator.controller('BookTableController', function ($scope, $state, $http, $timeo
 	
 	$scope.details = function(book) {
 		$state.go('book', {bookId: book.id});
+	};
+	
+	$scope.read = function(book) {
+		$state.go('start-session', {bookId: book.id});
 	};
 	
 	// start update cycle

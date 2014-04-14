@@ -16,6 +16,7 @@ import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.servlet.ShiroFilter;
 
 @WebFilter(
+	asyncSupported = true, 
 	urlPatterns = {
 		"/*"
 	}

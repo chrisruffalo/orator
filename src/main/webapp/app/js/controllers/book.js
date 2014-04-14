@@ -1,7 +1,6 @@
 orator.controller('BookViewController', function ($scope, $state, $stateParams, $http, $upload, $timeout, Books) {
 	// state variables
 	$scope.state = {};
-	$scope.state.fileUpload = false;
 	
 	// status of files being uploaded
 	$scope.fileStatus = [];
@@ -94,6 +93,11 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 		}, 500); // wait 500ms to see if something else changes before doing it
 	};
 	
+	// read
+	$scope.read = function() {
+		$state.go('start-session', {bookId: $scope.book.id});
+	};
+	
 	// save
 	$scope.saveMetadata = function() {
 		// if already counting down to save, cancel countdown in favor of
@@ -118,7 +122,7 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 		var updatedBook = Books.deleteTrack({bookId: $scope.book.id, trackId: track.id}, function() {
 			$scope.book = updatedBook;
 		});
-	}
+	};
 	
 	// load from route params
 	$scope.load($stateParams.bookId);	

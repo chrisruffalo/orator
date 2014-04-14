@@ -67,6 +67,7 @@
 		<script src="./thirdparty/js/angular-1.3.0-b5-resource.min.js"></script>
 		<script src="./thirdparty/js/angular-xeditable.min.js"></script>
 		<script src="./thirdparty/js/angular-file-upload.min.js"></script>
+		<script src="./thirdparty/js/angular-media-player.min.js"></script>
 		
 		<!-- angular ui components -->
 		<script src="./thirdparty/js/angular-ui-router.min.js"></script>
