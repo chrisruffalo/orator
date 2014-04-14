@@ -6,6 +6,10 @@ var pretty = {
 			return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
 		},
 		'seconds': function secondsToPretty(seconds) {
+			if(seconds < 0 || !util.isNumber(seconds)) {
+				seconds = 0;
+			}
+			
 			// from http://www.neowin.net/forum/topic/817666-javascriptconvert-seconds-to-days-hours-minutes-and-seconds/
 			var numhours = Math.floor(seconds / 3600);
 			var numminutes = Math.floor(((seconds % 86400) % 3600) / 60);
@@ -15,13 +19,13 @@ var pretty = {
 			if(numseconds < 10) {
 				output = "0" + output;
 			}
-			if(numminutes > 0 || (numhours + numdays > 0)) {
+			if(numminutes > 0 || numhours > 0) {
 				output = numminutes + "m " + output;
 				if(numminutes < 10) {
 					output = "0" + output;
 				}
 			}
-			if(numhours > 0 || numdays > 0) {
+			if(numhours > 0) {
 				output = numhours + "h " + output;
 				if(numhours < 10) {
 					output = "0" + output;
@@ -31,6 +35,10 @@ var pretty = {
 			return output;
 		},
 		'secondsWithDays': function secondsToPretty(seconds) {
+			if(seconds < 0 || !util.isNumber(seconds)) {
+				seconds = 0;
+			}
+			
 			// from http://www.neowin.net/forum/topic/817666-javascriptconvert-seconds-to-days-hours-minutes-and-seconds/
 			var numdays = Math.floor(seconds / 86400);
 			var numhours = Math.floor((seconds % 86400) / 3600);

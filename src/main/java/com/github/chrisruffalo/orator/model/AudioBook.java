@@ -15,6 +15,10 @@ public class AudioBook {
 	
 	private boolean hidden;
 	
+	private long time;
+	
+	private long size;
+	
 	private String owner;
 	
 	@Expose
@@ -70,6 +74,33 @@ public class AudioBook {
 
 	public void setOwner(String owner) {
 		this.owner = owner;
+	}
+
+	public long getTime() {
+		return time;
+	}
+
+	public void setTime(long time) {
+		this.time = time;
+	}
+	
+	public long getSize() {
+		return size;
+	}
+
+	public void setSize(long size) {
+		this.size = size;
+	}
+
+	public void calculateStats() {
+		long time = 0;
+		long size = 0;
+		for(BookTrack track : this.getBookTracks()) {
+			time += track.getLengthSeconds();
+			size += track.getBytesSize();
+		}
+		this.time = time;
+		this.size = size;
 	}
 
 }

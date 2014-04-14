@@ -32,8 +32,8 @@
 				<!-- Collect the nav links, forms, and other content for toggling -->
 			    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			      <ul class="nav navbar-nav">
-			        <li><a href="#">Read!</a></li>
-			        <li><a href="#">Books</a></li>
+			        <li><a href="#/sessions">Read!</a></li>
+			        <li><a href="#/books">Books</a></li>
 			      </ul>
 			      <ul class="nav navbar-nav navbar-right">
 			        <li><a href="./logout">logout</a></li>

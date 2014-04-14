@@ -20,19 +20,24 @@ orator.run(function(editableOptions, editableThemes) {
 orator.config(function($stateProvider, $urlRouterProvider){
 	
 	// set default
-	$urlRouterProvider.otherwise("/book");
+	$urlRouterProvider.otherwise("/books");
 	
 	// set up routes
 	$stateProvider
+	.state('books', {
+		url: '/books',
+		templateUrl: 'app/templates/books.html',
+		controller: 'BookTableController'
+	})
 	.state('book', {
-        url: "/book/:bookId",
+        url: '/book/:bookId',
         templateUrl: 'app/templates/book.html',
         controller: 'BookViewController'
     })
     // not sure if we need this state forever... but it's here
     // until we can get the parent/child state to work correctly...
     .state('newBook', {
-        url: "/book",
+        url: '/book',
         templateUrl: 'app/templates/book.html',
         controller: 'BookViewController'
     })

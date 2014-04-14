@@ -91,7 +91,7 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 		// try and load
 		$scope.deferLoadTimer = $timeout(function(){
 			$scope.load(id);
-		}, 1000); // wait 200ms to see if something else changes before doing it
+		}, 500); // wait 500ms to see if something else changes before doing it
 	};
 	
 	// save
@@ -110,10 +110,16 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 			saveBook.$save(function() {
 				$scope.state.saving = false;
 			});
-		}, 400); // only save if 400ms have passed since the last time a save has been requested
+		}, 200); // only save if 200ms have passed since the last time a save has been requested
 	};
 	
+	// delete track
+	$scope.deleteTrack = function(track) {
+		var updatedBook = Books.deleteTrack({bookId: $scope.book.id, trackId: track.id}, function() {
+			$scope.book = updatedBook;
+		});
+	}
+	
 	// load from route params
-	console.dir($stateParams);
 	$scope.load($stateParams.bookId);	
 });

@@ -7,7 +7,11 @@ orator.factory("Books", function ($resource) {
     
     			// get and create
     			'save': {method:'PUT', url: "services/secured/books/save"},
-    			'get': {method:'GET', url: "services/secured/books/:bookId", params: {bookId:"@id"}}
+    			'get': {method:'GET', url: "services/secured/books/:bookId", params: {bookId:"@id"}},
+    			
+    			// delete
+    			'deleteBook':  {method: 'DELETE', isArray:true, url: "services/secured/books/:bookId/delete", params: {bookId: "@id"}},
+    			'deleteTrack': {method: 'DELETE', url: "services/secured/books/:bookId/deleteTrack/:trackId", params: {bookId: "", trackId: ""}}
 			}
     );    
 });

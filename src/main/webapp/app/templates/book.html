@@ -20,11 +20,13 @@
 					 <div><a href="#" class="in-place-edit" onaftersave="saveMetadata()" editable-text="book.author">{{book.author}}</a></div>
 				 </div>
 			 	 <div class="col-sm-4 col-xs-12 col-xs-offset-0">
-					<p>Total Run Time:</p>
-					<p>30hr 3min 14sec</p>
+					<p><strong>Total Run Time:</strong></p>
+					<p>{{book.time | orator.seconds}}</p>
+					<p><strong>Total Size:</strong></p>
+					<p>{{book.size | orator.bytes}}</p>
 				 </div>
 			 	 <div class="col-sm-2 col-xs-12 col-xs-offset-0">
-					<button ng-if="book.id" class="btn btn-small btn-primary pull-right">start new reading session</button>
+					<button ng-if="book.id" class="btn btn-small btn-success pull-right">start new reading session</button>
 				 </div>
 			 </div>
 		</div>
@@ -42,6 +44,9 @@
 					 		file name
 					 	</th>
 					 	<th class="orator-table-header">
+					 		size
+					 	</th>
+					 	<th class="orator-table-header">
 					 		duration
 					 	</th>
 					 	<th class="orator-table-header">
@@ -54,20 +59,24 @@
 			 	</thead>
 			 	<tbody>
 			 		<tr ng-repeat="bookTrack in book.bookTracks">
-			 			<td>
+			 			<td class="col-xs-1">
 			 				{{$index + 1}}
 			 			</td>
-			 			<td>
+			 			<td class="col-xs-5">
 			 				{{bookTrack.fileName}}
 			 			</td>
-			 			<td>
+			 			<td class="col-xs-2">
+			 				{{bookTrack.bytesSize | orator.bytes}}
+			 			</td>
+			 			<td class="col-xs-2">
 			 				{{bookTrack.lengthSeconds | orator.seconds}}
 			 			</td>
-			 			<td>
+			 			<td class="col-xs-2">
 			 				{{bookTrack.bitsPerSecond | orator.bps}}
 			 			</td>
 			 			<td>
 			 				<!-- controls -->
+			 				<button class="btn btn-xs btn-danger" ng-click="deleteTrack(bookTrack)">delete</button>
 			 			</td>
 			 		</tr>
 			 	</tbody>
@@ -75,15 +84,12 @@
 			 
 			 <!-- file upload and controls, hidden on print small and extra small screens -->
 			 <div class="row hidden-print hidden-xs hidden-sm">
-			 	<div ng-if="state.fileUpload" class="col-sm-6 col-push-down">
-					<div>
+			 	<div class="col-sm-12 col-push-down">
+					<div class="pull-right">
 						 <span class="btn btn-default btn-file"><input type="file" ng-file-select="onFileSelect($files)" multiple accept=".mp3, .ogg, audio/mpeg3, audio/x-mpeg-3, audio/ogg" >Browse for Book Files...</span>
 					</div>
 			 	</div>				
-			 	<div class="col-sm-6 pull-right">
-			 		<button class="btn btn-small btn-default pull-right " ng-if="book.id" ng-click="state.fileUpload = !state.fileUpload">{{state.fileUpload ? '- done' : '+ add files'}}</button>
-			 	</div> 
-			 	<div ng-if="state.fileUpload && book.id && fileStatus && fileStatus.length > 0" class="col-sm-12">
+			 	<div ng-if="book.id && fileStatus && fileStatus.length > 0" class="col-sm-12">
 			 		<table class="table">
 			 			<tbody>
 			 				<tr ng-if="status.show" ng-repeat="status in fileStatus">

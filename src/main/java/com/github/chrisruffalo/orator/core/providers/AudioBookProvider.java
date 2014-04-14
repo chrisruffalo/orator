@@ -10,6 +10,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 
 import org.apache.commons.configuration.Configuration;
+import org.apache.commons.io.FileUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 
@@ -104,6 +106,11 @@ public class AudioBookProvider {
 		} else if(book.isHidden() && !SubjectUtil.is(this.subject, exsistingUserName)) {
 			throw new OratorRuntimeException("User " + userName + " cannot save a HIDDEN book that belongs to user " + exsistingUserName);
 		}
+		
+		// update book stats when updating tracks
+		if(updateTracks) { 
+			book.calculateStats();
+		}
 
 		// go to books dir
 		Path bookPath = this.getBookPath(id);
@@ -169,13 +176,15 @@ public class AudioBookProvider {
 	}
 	
 	public boolean addBookTrack(String bookId, String fileName, String contentType, InputStream bookFileStream) {
-		
-		AudioBook book = this.getBook(bookId);
-		
 		if(fileName == null || fileName.isEmpty()) {
 			return false;
 		}
-		
+			
+		AudioBook book = this.getBook(bookId);
+		if(book == null || book.getId() == null || book.getId().isEmpty()) {
+			return false;
+		}
+
 		// create new track
 		BookTrack track = new BookTrack();
 		String trackId = IdUtil.get();
@@ -223,6 +232,61 @@ public class AudioBookProvider {
 		this.saveBook(book);
 		
 		return true;
+	}
+	
+	public AudioBook deleteTrack(String bookId, String trackId) {
+		// if no track provided, return null
+		if(trackId == null || trackId.isEmpty()) {
+			return null;
+		}
+		
+		// get and check book
+		AudioBook book = this.getBook(bookId);
+		if(book == null || book.getId() == null || book.getId().isEmpty()) {
+			return null;
+		}
+
+		Iterator<BookTrack> iterator = book.getBookTracks().iterator();
+		while(iterator.hasNext()) {
+			BookTrack track = iterator.next();
+			// if the track is found
+			if(trackId.equalsIgnoreCase(track.getId())) {
+				// remove from iterator
+				iterator.remove();
+				
+				// save (so that it disappears from the metadata)
+				this.saveBook(book);
+				
+				// get path to track
+				Path bookPath = this.getBookPath(bookId);
+				Path trackPath = bookPath.resolve(track.getPath());
+				
+				// delete with result
+				try {
+					Files.deleteIfExists(trackPath);
+				} catch (IOException e) {
+					this.logger.warn("Could not delete book file at: {}", trackPath);
+				}
+				
+				// deleted
+				return book;
+			}
+		}
+		
+		// nothing deleted
+		return book;
+	}
+	
+	public List<AudioBook> deleteBook(String bookId) {
+		Path bookPath = this.getBookPath(bookId);
+		
+		try {
+			FileUtils.deleteDirectory(bookPath.toFile());
+		} catch (IOException e) {
+			this.logger.error("Could not delete path '{}' with error: {}", bookPath, e.getMessage(), e);
+		}
+		
+		return this.getBooks();
 	}
 	
 	private Path getBookPath(String bookId) {
