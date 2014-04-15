@@ -43,13 +43,13 @@
 					 	<th class="orator-table-header">
 					 		file name
 					 	</th>
-					 	<th class="orator-table-header">
+					 	<th class="orator-table-header hidden-xs">
 					 		size
 					 	</th>
 					 	<th class="orator-table-header">
 					 		duration
 					 	</th>
-					 	<th class="orator-table-header">
+					 	<th class="orator-table-header hidden-xs">
 					 		bitrate
 					 	</th>
 					 	<th class="orator-table-header">
@@ -59,22 +59,22 @@
 			 	</thead>
 			 	<tbody>
 			 		<tr ng-repeat="bookTrack in book.bookTracks">
-			 			<td class="col-xs-1">
+			 			<td class="col-sm-1 col-xs-1">
 			 				{{$index + 1}}
 			 			</td>
-			 			<td class="col-xs-5">
+			 			<td class="col-sm-4 col-xs-7">
 			 				{{bookTrack.fileName}}
 			 			</td>
-			 			<td class="col-xs-2">
+			 			<td class="col-sm-2 hidden-xs">
 			 				{{bookTrack.bytesSize | orator.bytes}}
 			 			</td>
-			 			<td class="col-xs-2">
+			 			<td class="col-sm-2 col-xs-3">
 			 				{{bookTrack.lengthSeconds | orator.seconds}}
 			 			</td>
-			 			<td class="col-xs-2">
+			 			<td class="col-sm-2 hidden-xs">
 			 				{{bookTrack.bitsPerSecond | orator.bps}}
 			 			</td>
-			 			<td>
+			 			<td class="col-sm-1 col-xs-1">
 			 				<!-- controls -->
 			 				<button class="btn btn-xs btn-danger" ng-click="deleteTrack(bookTrack)">delete</button>
 			 			</td>

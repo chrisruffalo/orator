@@ -40,16 +40,37 @@ public final class AudioMetadataUtil {
 		// get correct parser
 		final Parser parser = new AutoDetectParser();
 		
+		// get file size
+		long size = 0;
+		try {
+			size = Files.size(fullPath);
+		} catch (IOException e1) {
+			// nothing to do
+		}
+		
 		// parse file
 		try (InputStream fileInputStream = Files.newInputStream(fullPath)) {
 			parser.parse(fileInputStream, handler, metadata, parseCtx);
 			
-			// set metadata
-			track.setBitsPerSecond(Integer.valueOf(metadata.get(XMPDM.AUDIO_SAMPLE_RATE)));
+			// show all metadata
+			//for(String key : metadata.names()) {
+			//	LoggerFactory.getLogger("metadata").info("{} => {}", key, metadata.getValues(key));
+			//}
+			
+			// find duration
 			String lengthString = metadata.get(XMPDM.DURATION);
 			BigDecimal length = new BigDecimal(lengthString);
 			length = length.divide(BigDecimal.valueOf(1000l)); // run time is in milliseconds, convert to seconds
-			track.setLengthSeconds(length.longValue());
+			long duration = length.longValue();
+			track.setLengthSeconds(duration);
+			
+			// calcluate bitrate
+			if(size > 0 && duration > 0) {
+				long sizeInBits = size * 8;
+				long bitrate = sizeInBits / duration;
+				track.setBitsPerSecond(bitrate);
+			}
+			
 		} catch (IOException e) {
 			// nothing to do here, just won't have metadata
 		} catch (SAXException | TikaException e) {

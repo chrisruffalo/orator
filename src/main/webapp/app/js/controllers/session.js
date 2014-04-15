@@ -33,7 +33,10 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 		var playlist = [];
 		
 		for(var index = 0; index < fromBook.bookTracks.length; index++) {
+			// get track from track list
 			var track = fromBook.bookTracks[index];
+			
+			// construct playlist item
 			var item = {};
 			item.src = "./services/secured/orate?sessionId=" + fromSession.id + "&trackId=" + track.id; 
 			item.type = track.contentType;
@@ -42,9 +45,10 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 			playlist.push(item);
 		}
 		
-		// show and save playlist
-		console.dir(playlist);
+		// create playlist
 		$scope.playlist = playlist;
+		
+		// jump to track item and offset in track item
 	};
 	
 	// load

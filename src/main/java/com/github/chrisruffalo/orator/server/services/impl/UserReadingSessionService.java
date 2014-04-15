@@ -3,6 +3,7 @@ package com.github.chrisruffalo.orator.server.services.impl;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -35,5 +36,12 @@ public class UserReadingSessionService {
 	@Path("/{sessionId}") 
 	public ReadingSession getSession(@PathParam("sessionId") String sessionId){
 		return this.provider.getSession(sessionId);
+	}
+	
+	@DELETE
+	@Path("/{sessionId}/delete") 
+	public ReadingSession deleteSession(@PathParam("sessionId") String sessionId){
+		// todo: implement
+		return null;
 	}
 }

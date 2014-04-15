@@ -73,7 +73,7 @@ var pretty = {
 		'bps': function bitsPerSecond(bitsPerSecond) {
 			var sizes = ['bps', 'kbps', 'mbps', 'gbps', 'tbps'];
 			var index = 0;
-			var factor = 1024;
+			var factor = 1000;
 			while(bitsPerSecond > factor) {
 				bitsPerSecond = bitsPerSecond/factor;
 				index++;

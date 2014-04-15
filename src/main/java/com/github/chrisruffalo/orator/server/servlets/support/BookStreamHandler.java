@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.github.chrisruffalo.eeconfig.annotations.Logging;
 import com.github.chrisruffalo.orator.core.providers.AudioBookProvider;
@@ -309,7 +308,9 @@ public class BookStreamHandler implements ReadListener, WriteListener, AsyncList
 				outputStream.println("Content-Range: bytes " + this.currentRange.start + "-" + this.currentRange.end + "/" + this.currentRange.total);
 			} else {
 				// set single range response header
-				//response.setContentLengthLong(Files.size(this.trackPath));
+				long size = Files.size(this.trackPath);
+				this.logger.info("wanting to write a total of: {} bytes", size);
+				response.setContentLengthLong(size);
 				response.setHeader("Content-Range", "bytes " + this.currentRange.start + "-" + this.currentRange.end + "/" + this.currentRange.total);	
 			}
 		}
