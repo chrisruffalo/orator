@@ -196,4 +196,20 @@ public class UserReadingSessionProvider {
 		}
 		return null;
 	}
+	
+	public ReadingSession updateSession(String sessionId, String trackId, long seconds) {
+		ReadingSession session = this.getSession(sessionId);
+		
+		// make changes to session
+		session.setCurrentTrackId(trackId);
+		session.setSecondsOffset(seconds);
+		
+		// update
+		this.logger.trace("Updated session {} to use track {} at offset {}", sessionId, trackId, seconds);
+		
+		// save
+		this.write(session);
+				
+		return session;
+	}
 }

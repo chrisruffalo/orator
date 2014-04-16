@@ -11,6 +11,9 @@ public class ReadingSession {
 	private String bookId;
 	
 	@Expose
+	private String currentTrackId;
+	
+	@Expose
 	private String sessionName;
 	
 	@Expose
@@ -67,5 +70,13 @@ public class ReadingSession {
 
 	public void setBook(AudioBook book) {
 		this.book = book;
-	}	
+	}
+
+	public String getCurrentTrackId() {
+		return currentTrackId;
+	}
+
+	public void setCurrentTrackId(String currentTrackId) {
+		this.currentTrackId = currentTrackId;
+	}
 }

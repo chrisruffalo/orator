@@ -90,22 +90,22 @@
 					</div>
 			 	</div>				
 			 	<div ng-if="book.id && fileStatus && fileStatus.length > 0" class="col-sm-12">
-			 		<table class="table">
+			 		<table class="table table-striped table-hover table-bordered table-condensed">
 			 			<tbody>
 			 				<tr ng-if="status.show" ng-repeat="status in fileStatus">
 			 					<td class="col-sm-4">{{status.file.name}}</td>
 			 					<td class="col-sm-1">{{status.state}}</td>			 					
 			 					<td class="col-sm-5">
-			 						<div ng-if="'error' != status.state" class="progress">
+			 						<div ng-if="'error' != status.state && 'canceled' != status.state" class="progress">
 			 							<div class="progress-bar" role="progressbar" aria-valuenow="{{status.percent}}" aria-valuemin="0" aria-valuemax="100" style="width: {{status.percent}}%;">{{status.percent}}%</div>
 			 						</div>
-			 						<div ng-if="'error' == status.state && status.errorMessage">
+			 						<div ng-if="('error' == status.state || 'canceled' == status.state) && status.errorMessage">
 			 							<p>Error: {{status.errorMessage}} 
 			 						</div>
 			 					</td>
 			 					<td class="col-sm-1">
 			 						<button ng-click="abortUpload(status)" ng-if="status.state == 'uploading'" class="btn btn-xs btn-danger pull-right">cancel</button>
-			 						<button ng-click="removeFileStatus(status)" ng-if="status.state == 'complete' || status.state == 'error'" class="btn btn-xs btn-default pull-right">done</button>
+			 						<button ng-click="removeFileStatus(status)" ng-if="status.state == 'complete' || status.state == 'error' || status.state == 'canceled'" class="btn btn-xs btn-default pull-right">done</button>
 			 					</td>
 			 				</tr>
 			 			</tbody>

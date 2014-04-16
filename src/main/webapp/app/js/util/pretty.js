@@ -13,7 +13,7 @@ var pretty = {
 			// from http://www.neowin.net/forum/topic/817666-javascriptconvert-seconds-to-days-hours-minutes-and-seconds/
 			var numhours = Math.floor(seconds / 3600);
 			var numminutes = Math.floor(((seconds % 86400) % 3600) / 60);
-			var numseconds = ((seconds % 86400) % 3600) % 60;
+			var numseconds = Math.floor(((seconds % 86400) % 3600) % 60);
 
 			var output = numseconds + "s";
 			if(numseconds < 10) {
@@ -43,7 +43,7 @@ var pretty = {
 			var numdays = Math.floor(seconds / 86400);
 			var numhours = Math.floor((seconds % 86400) / 3600);
 			var numminutes = Math.floor(((seconds % 86400) % 3600) / 60);
-			var numseconds = ((seconds % 86400) % 3600) % 60;
+			var numseconds = Math.floor(((seconds % 86400) % 3600) % 60);
 
 			var output = numseconds + "s";
 			if(numseconds < 10) {

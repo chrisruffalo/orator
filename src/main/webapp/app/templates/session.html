@@ -40,11 +40,18 @@
 			<span ng-show="audioPlayer.playing">Player status: Playing</span>
 			<span ng-show="!audioPlayer.playing">Player status: Paused</span>
 			</p>
+			
+			<p>Network status: {{audioPlayer.network}}</p>
+			<p>Current Position: {{audioPlayer.currentTime | orator.seconds}} (of {{audioPlayer.duration | orator.seconds}})</p>
 	
 			<p>
 			<!-- primitive controls -->
 			<button ng-if="!audioPlayer.playing" class="btn btn-md btn-primary" ng-click="audioPlayer.play()">play!</button>
 			<button ng-if="audioPlayer.playing" class="btn btn-md btn-primary" ng-click="audioPlayer.pause()">pause!</button>
+			</p>
+			
+			<p>
+			<button ng-if="audioPlayer.playing" class="btn btn-md btn-primary" ng-click="doJump()">seek!</button>
 			</p>
 		</div>
 </div>
@@ -60,13 +67,13 @@
 					 	<th class="orator-table-header">
 					 		file name
 					 	</th>
-					 	<th class="orator-table-header">
+					 	<th class="orator-table-header hidden-xs">
 					 		size
 					 	</th>
 					 	<th class="orator-table-header">
 					 		duration
 					 	</th>
-					 	<th class="orator-table-header">
+					 	<th class="orator-table-header hidden-xs">
 					 		bitrate
 					 	</th>
 					 	<th class="orator-table-header">
@@ -76,22 +83,22 @@
 			 	</thead>
 			 	<tbody>
 			 		<tr ng-repeat="bookTrack in session.book.bookTracks">
-			 			<td class="col-xs-1">
+			 			<td class="col-sm-1 col-xs-1">
 			 				{{$index + 1}}
 			 			</td>
-			 			<td class="col-xs-5">
+			 			<td class="col-sm-4 col-xs-8">
 			 				{{bookTrack.fileName}}
 			 			</td>
-			 			<td class="col-xs-2">
+			 			<td class="col-sm-2 hidden-xs">
 			 				{{bookTrack.bytesSize | orator.bytes}}
 			 			</td>
-			 			<td class="col-xs-2">
+			 			<td class="col-sm-2 col-xs-2">
 			 				{{bookTrack.lengthSeconds | orator.seconds}}
 			 			</td>
-			 			<td class="col-xs-2">
+			 			<td class="col-sm-1 hidden-xs">
 			 				{{bookTrack.bitsPerSecond | orator.bps}}
 			 			</td>
-			 			<td>
+			 			<td class="col-sm-2 col-xs-1">
 			 				<!-- controls -->
 			 			</td>
 			 		</tr>

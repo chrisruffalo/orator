@@ -13,7 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.slf4j.Logger;
 
+import com.github.chrisruffalo.eeconfig.annotations.Logging;
 import com.github.chrisruffalo.orator.core.providers.AudioBookProvider;
 import com.github.chrisruffalo.orator.model.AudioBook;
 
@@ -37,6 +39,10 @@ public class AudioBookUploadServlet extends HttpServlet {
 	
 	@Inject
 	private AudioBookProvider provider;
+	
+	@Inject
+	@Logging
+	private Logger logger;
 
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -78,7 +84,8 @@ public class AudioBookUploadServlet extends HttpServlet {
 			}
 			res.getWriter().write("done");
 		} catch (Exception ex) {
-			throw new ServletException(ex);
+			this.logger.warn("The stream was ended unexpectedly, probably a user-abort");
+			//throw new ServletException(ex);
 		}
 	}	
 }

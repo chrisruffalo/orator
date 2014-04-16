@@ -8,6 +8,9 @@ orator.factory("Sessions", function ($resource) {
     			// start a new session
     			'start': {method:'GET', url: 'services/secured/reading/:bookId/start', params: {bookId:"@id"}},
     			
+    			// update position
+    			'update': {method:'PUT', url: 'services/secured/reading/:sessionId/update/:trackId', params: {sessionId:"@id", trackId:"@track.id"}},
+    			
 				// query/info (no param)
 				'query':  {method:'GET', isArray:true},
 				

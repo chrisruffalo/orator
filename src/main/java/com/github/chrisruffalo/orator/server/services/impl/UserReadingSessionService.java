@@ -1,15 +1,21 @@
 package com.github.chrisruffalo.orator.server.services.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.slf4j.Logger;
+
+import com.github.chrisruffalo.eeconfig.annotations.Logging;
 import com.github.chrisruffalo.orator.core.providers.UserReadingSessionProvider;
 import com.github.chrisruffalo.orator.model.ReadingSession;
 
@@ -19,6 +25,10 @@ public class UserReadingSessionService {
 
 	@Inject
 	private UserReadingSessionProvider provider;
+	
+	@Inject
+	@Logging
+	private Logger logger;
 	
 	@GET
 	@Path("/sessions")
@@ -43,5 +53,26 @@ public class UserReadingSessionService {
 	public ReadingSession deleteSession(@PathParam("sessionId") String sessionId){
 		// todo: implement
 		return null;
+	}
+	
+	@PUT
+	@Consumes({MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON})
+	@Path("/{sessionId}/update/{trackId}")
+	public ReadingSession updateSession(@PathParam("sessionId") String sessionId, @PathParam("trackId") String trackId, String seconds) {
+		// get seconds
+		long secondsParsed = 0;
+		try {
+			secondsParsed = (new BigDecimal(seconds)).longValue();
+		} catch (Exception ex) {
+			this.logger.warn("Could not parse seconds offset to update session info: {}", ex.getLocalizedMessage());
+		}
+		
+		// no change if seconds is less than 1
+		if(secondsParsed < 1) {
+			return this.provider.getSession(sessionId);
+		}
+		
+		// change and return
+		return this.provider.updateSession(sessionId, trackId, secondsParsed);
 	}
 }

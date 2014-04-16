@@ -61,10 +61,14 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 	    	currentUploadStatus.removal = $timeout(function() {
 	        	$scope.removeFileStatus(currentUploadStatus);	  
 	        }, 180000); // wait 3 minutes until removal
-	      });
-	      //.error(...)
+	      })
+	      .error(function(){
+	    	 currentUploadStatus.state = 'error';
+	    	 currentUploadStatus.errorMessage = 'Upload ended unexpectedly';
+	      })
 	      //.then(success, error, progress); 
 	      //.xhr(function(xhr){xhr.upload.addEventListener(...)})// access and attach any event listener to XMLHttpRequest.
+	      ;
 	    }
 	};
 	
@@ -78,7 +82,11 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 	
 	// abort individual file upload
 	$scope.abortUpload = function(uploadStatus) {
-		uploadStatus.upload.abort();
+		if(uploadStatus.upload) {
+			uploadStatus.upload.abort();
+		}
+		uploadStatus.state = 'canceled';
+		currentUploadStatus.errorMessage = 'Upload canceled by user';
 	};
 	
 	$scope.deferedLoad = function(id) {
