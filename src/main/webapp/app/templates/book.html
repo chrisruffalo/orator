@@ -39,7 +39,7 @@
 			 		<tr>
 					 	<th class="orator-table-header">
 					 		track
-					 	</th>
+						 	</th>
 					 	<th class="orator-table-header">
 					 		file name
 					 	</th>
@@ -57,9 +57,10 @@
 					 	</th>
 				 	</tr>
 			 	</thead>
-			 	<tbody ui-sortable="sortableOptions" ng-model="book.bookTracks">
+			 	<tbody id="trackTable" ui-sortable="sortableOptions" ng-model="book.bookTracks">
 			 		<tr ng-repeat="bookTrack in book.bookTracks">
-			 			<td class="col-sm-1 col-xs-1">
+			 			<td class="col-sm-1 col-xs-1 text-right">
+			 				<i ng-if="editing" class="fa fa-bars grabber pull-left"></i>
 			 				{{$index + 1}}
 			 			</td>
 			 			<td class="col-sm-4 col-xs-7">
@@ -76,7 +77,7 @@
 			 			</td>
 			 			<td class="col-sm-1 col-xs-1">
 			 				<!-- controls -->
-			 				<button class="btn btn-xs btn-danger" ng-click="deleteTrack(bookTrack)">delete</button>
+			 				<button class="btn btn-xs btn-danger pull-right" ng-click="deleteTrack(bookTrack)">delete</button>
 			 			</td>
 			 		</tr>
 			 	</tbody>
@@ -90,9 +91,10 @@
 			 		<button ng-if="!editing" ng-click="editTracks()" class="btn btn-default">edit tracks</button>
 			 		<button ng-if="editing" ng-click="resetTracks()" class="btn btn-default">reset tracks</button>&nbsp;
 			 		<button ng-if="editing" ng-click="saveTracks()" class="btn btn-default">save tracks</button>
+			 		<button ng-if="editing" ng-click="cancelEditTracks()" class="btn btn-default pull-right">cancel</button>
 			 	
 			 		<!-- file selector overlay for style compatibility -->
-					<div class=" hidden-xs hidden-sm pull-right">
+					<div ng-if="!editing" class="hidden-xs hidden-sm pull-right">
 						 <span class="btn btn-default btn-file"><input type="file" ng-file-select="onFileSelect($files)" multiple accept=".mp3, .ogg, audio/mpeg3, audio/x-mpeg-3, audio/ogg" >Browse for Book Files...</span>
 					</div>
 			 	</div>				

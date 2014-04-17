@@ -60,3 +60,14 @@ body {
     cursor: inherit;
     display: block;
 }
+
+/* sortable stuff */
+.sortable-placeholder {
+	min-width: 100%;
+	min-height: 100%;
+	
+	background-color: #ffcccc;
+	
+	border-width: 1px;
+	border-style: dotted;		
+}

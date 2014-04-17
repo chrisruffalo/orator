@@ -84,7 +84,7 @@ public class AudioBookProvider {
 		}
 	}
 	
-	public AudioBook saveBook(AudioBook book, boolean updateTracks) {
+	public synchronized AudioBook saveBook(AudioBook book, boolean updateTracks) {
 		// do nothing
 		if(book == null) {
 			return book;
@@ -175,7 +175,7 @@ public class AudioBookProvider {
 		return bookList;
 	}
 	
-	public boolean addBookTrack(String bookId, String fileName, String contentType, InputStream bookFileStream) {
+	public synchronized boolean addBookTrack(String bookId, String fileName, String contentType, InputStream bookFileStream) {
 		if(fileName == null || fileName.isEmpty()) {
 			return false;
 		}
@@ -202,6 +202,7 @@ public class AudioBookProvider {
 		// write file
 		try(OutputStream output = Files.newOutputStream(filePath)) {
 			ByteStreams.copy(bookFileStream, output);
+			this.logger.trace("Wrote book track {} to file", filePath);
 		} catch (IOException e) {
 			this.logger.warn("Could not write file: {} (reason: {})", filePath.toString(), e.getLocalizedMessage());
 					

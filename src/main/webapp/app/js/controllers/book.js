@@ -1,6 +1,7 @@
 orator.controller('BookViewController', function ($scope, $state, $stateParams, $http, $upload, $timeout, Books) {
 	// state variables
 	$scope.state = {};
+	$scope.editing = false;
 	
 	// status of files being uploaded
 	$scope.fileStatus = [];
@@ -35,40 +36,46 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 	    for (var i = 0; i < $files.length; i++) {
 	      var file = $files[i];
 	      var currentUploadStatus = {
+	    	  'index': i,	
 	    	  'file': file, 
 	    	  'state': 'starting', 
 	    	  'show': true,
 	    	  'errorMessage': null
 	      };
-	      $scope.fileStatus.push(currentUploadStatus); 
-	      currentUploadStatus.upload = $upload.upload({
-	    	  // call book upload with bookId as parameter (tried using the data block but it made the servlet MUCH more complicated)
-			  url: 'services/secured/audioBookUpload?bookId=' + $scope.book.id,
-			  // send book id as value
-			  // data: {bookId: $scope.book.id},
-  			  file: file, // or list of files: $files for html5 only
-	      }).progress(function(evt) {
-			  currentUploadStatus.percent = parseInt(100.0 * evt.loaded / evt.total);
-			  if(currentUploadStatus.percent >= 100) {
-				  currentUploadStatus.state = 'complete';
-			  } else {
-				  currentUploadStatus.state = 'uploading';
-			  }
-		  }).success(function(data, status, headers, config) {
-	    	currentUploadStatus.percent = 100;
-	    	currentUploadStatus.state = 'complete';
-        	$scope.deferedLoad($scope.book.id);	    	
-	    	currentUploadStatus.removal = $timeout(function() {
-	        	$scope.removeFileStatus(currentUploadStatus);	  
-	        }, 180000); // wait 3 minutes until removal
-	      })
-	      .error(function(){
-	    	 currentUploadStatus.state = 'error';
-	    	 currentUploadStatus.errorMessage = 'Upload ended unexpectedly';
-	      })
-	      //.then(success, error, progress); 
-	      //.xhr(function(xhr){xhr.upload.addEventListener(...)})// access and attach any event listener to XMLHttpRequest.
-	      ;
+	      // create IIFE ... todo: make this it's own function
+	      (function(localUploadStatus) {
+		      $scope.fileStatus.push(localUploadStatus); 
+		      localUploadStatus.upload = $upload.upload({
+		    	  // call book upload with bookId as parameter (tried using the data block but it made the servlet MUCH more complicated)
+				  url: 'services/secured/audioBookUpload?bookId=' + $scope.book.id,
+				  // send book id as value
+				  // data: {bookId: $scope.book.id},
+	  			  file: file, // or list of files: $files for html5 only
+		      }).progress(function(evt) {
+		    	  console.log("updating percent status on index: " + localUploadStatus.index);
+		    	  console.log("i value: " + i);
+		    	  localUploadStatus.percent = parseInt(100.0 * evt.loaded / evt.total);
+				  if(localUploadStatus.percent >= 100) {
+					  localUploadStatus.state = 'complete';
+				  } else {
+					  localUploadStatus.state = 'uploading';
+				  }
+			  }).success(function(data, status, headers, config) {
+		    	localUploadStatus.percent = 100;
+		    	localUploadStatus.state = 'complete';
+	        	$scope.deferedLoad($scope.book.id);	    	
+		    	localUploadStatus.removal = $timeout(function() {
+		        	$scope.removeFileStatus(localUploadStatus);	  
+		        }, 180000); // wait 3 minutes until removal
+		      })
+		      .error(function(){
+		    	 localUploadStatus.state = 'error';
+		    	 localUploadStatus.errorMessage = 'Upload ended unexpectedly';
+		      })
+		      //.then(success, error, progress); 
+		      //.xhr(function(xhr){xhr.upload.addEventListener(...)})// access and attach any event listener to XMLHttpRequest.
+		      ;
+	      })(currentUploadStatus);
 	    }
 	};
 	
@@ -132,10 +139,16 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 		});
 	};	
 
-	// sortable
+	// sortable table
 	$scope.sortableOptions = {
 		// options
 		disabled: true, // always starts disabled
+		axis: "y", // only up/down  (no need to go side/side)
+		containment: "#trackTable", // stay in table
+		handle: ".grabber",
+		forcePlaceholderSize: true,
+		placeholder: "sortable-placeholder",
+		tolerance: "pointer",
 		
 		// callbacks
 		update : function(e, ui) {
@@ -144,6 +157,47 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 		stop : function(e, ui) {
 			//nothing
 		}
+	};
+	
+	// editing controls
+	$scope.editTracks = function() {
+		// enable sorting
+		$scope.sortableOptions.disabled = false;
+		
+		// copy tracks for reset
+		$scope.backupTracks = angular.copy($scope.book.bookTracks);
+		
+		// switch to editing mode
+		$scope.editing = true;
+	};
+	
+	$scope.resetTracks = function() {
+		// reset tracks
+		if($scope.backupTracks != null) {
+			$scope.book.bookTracks = $scope.backupTracks;
+			$scope.backupTracks = null;
+		}
+	};
+	
+	$scope.cancelEditTracks = function() {
+		// enable sorting
+		$scope.sortableOptions.disabled = true;
+		
+		// reset on cancel
+		$scope.resetTracks();
+		
+		// switch to editing mode
+		$scope.editing = false;
+	}
+	
+	$scope.saveTracks = function() {
+		// enable sorting
+		$scope.sortableOptions.disabled = true;
+		
+		// todo: call to save tracks
+		
+		// switch from editing mode
+		$scope.editing = false;
 	};
 	
 	// load from route params

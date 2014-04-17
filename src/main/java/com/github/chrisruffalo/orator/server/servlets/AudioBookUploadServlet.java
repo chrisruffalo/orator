@@ -55,6 +55,7 @@ public class AudioBookUploadServlet extends HttpServlet {
 		// get what the file name needs to be
 		AudioBook book = this.provider.getBook(bookId);
 		if(book == null) {
+			this.logger.error("The book id:{} was not found", bookId);
 			res.sendError(HttpServletResponse.SC_BAD_REQUEST, "a book valid (existing) book id is required to upload an audiobook file");
 			return;
 		}
@@ -75,13 +76,20 @@ public class AudioBookUploadServlet extends HttpServlet {
 						String fileName = item.getName();
 						InputStream bookStream = item.openStream();
 						String contentType = item.getContentType();
+						
+						this.logger.trace("Got book stream for fileName: {}", fileName);
+						
 						if(bookStream != null) {						
 							// add book track to book
 							this.provider.addBookTrack(bookId, fileName, contentType, bookStream);
+							
+							// wrote
+							this.logger.trace("Wrote book stream for fileName: {}", fileName);
 						}
 					} 					
 				}
 			}
+			// write response
 			res.getWriter().write("done");
 		} catch (Exception ex) {
 			this.logger.warn("The stream was ended unexpectedly, probably a user-abort");

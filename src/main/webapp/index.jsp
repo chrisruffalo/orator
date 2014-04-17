@@ -13,6 +13,7 @@
 		<link href="./thirdparty/css/bootstrap.min.css" rel="stylesheet">
 		<link href="./thirdparty/css/jquery-ui-1.10.4.custom.min.css">
 		<link href="./thirdparty/css/xeditable.css" rel="stylesheet">
+		<link href="./thirdparty/css/font-awesome.min.css" rel="stylesheet">
 		
 		<!-- application css -->
 		<link href="./css/orator.css" rel="stylesheet">
