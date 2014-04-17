@@ -6,7 +6,7 @@ orator.factory("Books", function ($resource) {
 				'query':  {method:'GET', isArray:true},
     
     			// get and create
-    			'save': {method:'PUT', url: "services/secured/books/save"},
+    			'save': {method:'PUT', url: "services/secured/books/save?updateTracks=:updateTracks", params: {updateTracks: true}},
     			'get': {method:'GET', url: "services/secured/books/:bookId", params: {bookId:"@id"}},
     			
     			// delete

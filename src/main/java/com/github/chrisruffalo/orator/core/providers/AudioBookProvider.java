@@ -107,10 +107,12 @@ public class AudioBookProvider {
 			throw new OratorRuntimeException("User " + userName + " cannot save a HIDDEN book that belongs to user " + exsistingUserName);
 		}
 		
-		// update book stats when updating tracks
-		if(updateTracks) { 
-			book.calculateStats();
+		// copy tracks from previous book
+		if(!updateTracks) {
+			AudioBook previousBook = this.getBook(id);
+			book.setBookTracks(previousBook.getBookTracks());
 		}
+		book.calculateStats();
 
 		// go to books dir
 		Path bookPath = this.getBookPath(id);
@@ -127,9 +129,7 @@ public class AudioBookProvider {
 		// save book to file
 		try (BufferedWriter writer = Files.newBufferedWriter(bookDescriptor, Charset.defaultCharset())) {
 			GsonBuilder builder = new GsonBuilder();
-			if(!updateTracks) {
-				builder.excludeFieldsWithoutExposeAnnotation();
-			}				
+			builder.setPrettyPrinting();
 			Gson gson = builder.create();
 			gson.toJson(book, writer);
 		} catch (IOException e) {

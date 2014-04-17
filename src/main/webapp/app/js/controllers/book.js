@@ -125,11 +125,18 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 		$scope.saveMetadataTimer = $timeout(function() {
 			// save (and update state)
 			$scope.state.saving = true;
-			var saveBook = new Books($scope.book);
-			saveBook.$save(function() {
+			var saveBook = Books.save($scope.book, {updateTracks: false}, function() {
+				$scope.book = saveBook;
 				$scope.state.saving = false;
 			});
 		}, 200); // only save if 200ms have passed since the last time a save has been requested
+	};
+
+	// save
+	$scope.doSaveTracks = function() {
+		var saveBook = Books.save($scope.book, function(){
+			$scope.book = saveBook;
+		});
 	};
 	
 	// delete track
@@ -188,13 +195,14 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 		
 		// switch to editing mode
 		$scope.editing = false;
-	}
+	};
 	
 	$scope.saveTracks = function() {
 		// enable sorting
 		$scope.sortableOptions.disabled = true;
 		
-		// todo: call to save tracks
+		// save tracks
+		$scope.doSaveTracks();
 		
 		// switch from editing mode
 		$scope.editing = false;

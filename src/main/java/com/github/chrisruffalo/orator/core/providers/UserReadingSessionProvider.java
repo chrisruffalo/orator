@@ -143,6 +143,7 @@ public class UserReadingSessionProvider {
 		// write session to file
 		try (BufferedWriter writer = Files.newBufferedWriter(sessionPath, Charset.defaultCharset())) {
 			GsonBuilder builder = new GsonBuilder();
+			builder.setPrettyPrinting();
 			builder.excludeFieldsWithoutExposeAnnotation();
 			Gson gson = builder.create();
 			gson.toJson(session, writer);

@@ -3,29 +3,20 @@ package com.github.chrisruffalo.orator.model;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.google.gson.annotations.Expose;
-
 public class AudioBook {
 
-	@Expose
 	private String id;
 	
-	@Expose
 	private String title;
 	
-	@Expose
 	private String author;
 	
-	@Expose
 	private boolean hidden;
 	
-	@Expose
 	private long time;
 	
-	@Expose
 	private long size;
 	
-	@Expose
 	private String owner;
 	
 	private List<BookTrack> bookTracks;
