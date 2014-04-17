@@ -4,13 +4,14 @@
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 	    <meta name="description" content="">
 		
 		<title>Orator</title>
 		
 		<!-- thirdparty css -->
 		<link href="./thirdparty/css/bootstrap.min.css" rel="stylesheet">
+		<link href="./thirdparty/css/jquery-ui-1.10.4.custom.min.css">
 		<link href="./thirdparty/css/xeditable.css" rel="stylesheet">
 		
 		<!-- application css -->
@@ -58,6 +59,7 @@
 	
 		<!-- required third party libraries -->
 		<script src="./thirdparty/js/jquery-2.1.0.min.js"></script>
+		<script src="./thirdparty/js/jquery-ui-1.10.4.custom.min.js"></script>
 		<script src="./thirdparty/js/bootstrap.min.js"></script>
 				
 		<!-- angular -->
@@ -71,6 +73,7 @@
 		
 		<!-- angular ui components -->
 		<script src="./thirdparty/js/angular-ui-router.min.js"></script>
+		<script src="./thirdparty/js/angular-ui-sortable.js"></script>
 				
 		<!-- orator utilities -->
 		<script src="./app/js/util/util.js"></script>

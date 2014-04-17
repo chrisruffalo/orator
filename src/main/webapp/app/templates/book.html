@@ -57,7 +57,7 @@
 					 	</th>
 				 	</tr>
 			 	</thead>
-			 	<tbody>
+			 	<tbody ui-sortable="sortableOptions" ng-model="book.bookTracks">
 			 		<tr ng-repeat="bookTrack in book.bookTracks">
 			 			<td class="col-sm-1 col-xs-1">
 			 				{{$index + 1}}
@@ -83,13 +83,20 @@
 			 </table>
 			 
 			 <!-- file upload and controls, hidden on print small and extra small screens -->
-			 <div class="row hidden-print hidden-xs hidden-sm">
+			 <!-- but track editing controls are NOT -->
+			 <div class="row hidden-print">
 			 	<div class="col-sm-12 col-push-down">
-					<div class="pull-right">
+			 		<!-- form editing control -->
+			 		<button ng-if="!editing" ng-click="editTracks()" class="btn btn-default">edit tracks</button>
+			 		<button ng-if="editing" ng-click="resetTracks()" class="btn btn-default">reset tracks</button>&nbsp;
+			 		<button ng-if="editing" ng-click="saveTracks()" class="btn btn-default">save tracks</button>
+			 	
+			 		<!-- file selector overlay for style compatibility -->
+					<div class=" hidden-xs hidden-sm pull-right">
 						 <span class="btn btn-default btn-file"><input type="file" ng-file-select="onFileSelect($files)" multiple accept=".mp3, .ogg, audio/mpeg3, audio/x-mpeg-3, audio/ogg" >Browse for Book Files...</span>
 					</div>
 			 	</div>				
-			 	<div ng-if="book.id && fileStatus && fileStatus.length > 0" class="col-sm-12">
+			 	<div ng-if="book.id && fileStatus && fileStatus.length > 0" class="col-sm-12  hidden-xs hidden-sm">
 			 		<table class="table table-striped table-hover table-bordered table-condensed">
 			 			<tbody>
 			 				<tr ng-if="status.show" ng-repeat="status in fileStatus">

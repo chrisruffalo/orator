@@ -50,10 +50,9 @@ public class UserReadingSessionService {
 	
 	@DELETE
 	@Path("/{sessionId}/delete") 
-	public ReadingSession deleteSession(@PathParam("sessionId") String sessionId){
-		// todo: implement
-		return null;
-	}
+	public List<ReadingSession> deleteSession(@PathParam("sessionId") String sessionId){
+		return this.provider.deleteSession(sessionId);
+	}	
 	
 	@PUT
 	@Consumes({MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON})

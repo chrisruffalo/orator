@@ -5,7 +5,8 @@ var orator = angular.module('orator',
 	 'ngResource', 				// json/ajax services
 	 'xeditable', 				// edit values in-place
 	 'angularFileUpload',		// file upload
-	 'mediaPlayer'				// plays audio (and video, but no need)
+	 'mediaPlayer',				// plays audio (and video, but no need)
+	 'ui.sortable'			  	// sortable file list
 	]
 );
 

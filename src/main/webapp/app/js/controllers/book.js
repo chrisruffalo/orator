@@ -130,6 +130,20 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 		var updatedBook = Books.deleteTrack({bookId: $scope.book.id, trackId: track.id}, function() {
 			$scope.book = updatedBook;
 		});
+	};	
+
+	// sortable
+	$scope.sortableOptions = {
+		// options
+		disabled: true, // always starts disabled
+		
+		// callbacks
+		update : function(e, ui) {
+			//nothing
+		},
+		stop : function(e, ui) {
+			//nothing
+		}
 	};
 	
 	// load from route params

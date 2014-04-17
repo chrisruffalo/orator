@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 
 import com.github.chrisruffalo.eeconfig.annotations.Logging;
 import com.github.chrisruffalo.orator.core.util.IdUtil;
+import com.github.chrisruffalo.orator.core.util.SubjectUtil;
 import com.github.chrisruffalo.orator.model.AudioBook;
 import com.github.chrisruffalo.orator.model.ReadingSession;
 import com.google.gson.Gson;
@@ -99,6 +100,27 @@ public class UserReadingSessionProvider {
 		this.write(session);
 					
 		return session;
+	}
+	
+	public List<ReadingSession> deleteSession(String sessionId) {
+		if(sessionId == null || sessionId.isEmpty()) {
+			return this.getSessions();
+		}
+		
+		// get username
+		String userName = this.subject.getPrincipal().toString();
+
+		// get target session file for writing
+		Path toSessions = this.reading.getUserSessionDir(userName);
+		Path sessionPath = toSessions.resolve("session-" + sessionId + ".json");
+		
+		try {
+			Files.deleteIfExists(sessionPath);
+		} catch (IOException e1) {
+			this.logger.info("Could not delete session {} for user {}", sessionId, SubjectUtil.name(this.subject));
+		}		
+		
+		return this.getSessions();
 	}
 	
 	private void write(ReadingSession session) {
