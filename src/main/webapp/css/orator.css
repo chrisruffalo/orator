@@ -71,3 +71,16 @@ body {
 	border-width: 1px;
 	border-style: dotted;		
 }
+
+/* book cover upload-form */
+.cover-overlay {
+	position: absolute; 
+	left: 25px; 
+	top: 10px;
+	z-index: 1000;
+}
+
+/* handle knob overlay */
+.angular-knob-container {
+	position: absolute;
+}

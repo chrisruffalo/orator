@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.nio.channels.ByteChannel;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -84,7 +85,7 @@ public class AudioBookProvider {
 		}
 	}
 	
-	public synchronized AudioBook saveBook(AudioBook book, boolean updateTracks) {
+	public synchronized AudioBook saveBook(AudioBook book) {
 		// do nothing
 		if(book == null) {
 			return book;
@@ -107,11 +108,7 @@ public class AudioBookProvider {
 			throw new OratorRuntimeException("User " + userName + " cannot save a HIDDEN book that belongs to user " + exsistingUserName);
 		}
 		
-		// copy tracks from previous book
-		if(!updateTracks) {
-			AudioBook previousBook = this.getBook(id);
-			book.setBookTracks(previousBook.getBookTracks());
-		}
+		// recalculate track stats
 		book.calculateStats();
 
 		// go to books dir
@@ -139,11 +136,7 @@ public class AudioBookProvider {
 
 		return book;
 	}
-	
-	public AudioBook saveBook(AudioBook book) {
-		return this.saveBook(book, true);
-	}
-	
+
 	public List<AudioBook> getBooks() {
 		// go to books dir
 		String homePath = this.configuration.getString(ConfigurationProvider.KEY_HOME_DIR, ConfigurationProvider.DEFAULT_HOME_DIR);
@@ -290,6 +283,118 @@ public class AudioBookProvider {
 		return this.getBooks();
 	}
 	
+	public boolean addCover(String bookId, String contentType,	InputStream coverStream) {
+		AudioBook book = this.getBook(bookId);
+		if(book == null || book.getId() == null || book.getId().isEmpty()) {
+			return false;
+		}
+		
+		// get path to book
+		Path bookPath = this.getBookPath(bookId);
+		
+		// decide on file name
+		String coverName = "cover.";
+		
+		contentType = contentType.toLowerCase();
+		if(contentType.contains("jpg") || contentType.contains("jpeg")) {
+			coverName = coverName + "jpg";
+		} else if(contentType.contains("png")) {
+			coverName = coverName + "png";
+		} else {
+			return false;
+		}
+		
+		// delete book cover(s)
+		this.deleteBookCover(bookId);
+		
+		// write out file
+		Path coverPath = bookPath.resolve(coverName);
+		
+		// write cover file
+		try(OutputStream output = Files.newOutputStream(coverPath)) {
+			ByteStreams.copy(coverStream, output);
+			this.logger.trace("Wrote book cover {} to file", coverPath);
+		} catch (IOException e) {
+			this.logger.warn("Could not write file: {} (reason: {})", coverPath.toString(), e.getLocalizedMessage());
+					
+			// delete, the act of opening the stream creates the file 
+			try {
+				Files.deleteIfExists(coverPath);
+			} catch (IOException e1) {
+				// it doesn't matter
+			}
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public ByteChannel getCover(String bookId) {
+		// book
+		AudioBook book = this.getBook(bookId);
+		if(book == null || book.getId() == null || book.getId().isEmpty()) {
+			return null;
+		}
+		
+		// get book path
+		Path bookPath = this.getBookPath(bookId);
+		
+		// look for possible cover files
+		DirectoryStream.Filter<Path> directoryFilter = new DirectoryStream.Filter<Path>() {
+			@Override
+			public boolean accept(Path entry) throws IOException {
+				return Files.isRegularFile(entry) && entry.getFileName().toString().startsWith("cover");
+			}		
+		};
+		
+		// stream covers until one is found
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(bookPath, directoryFilter)) {
+			for(Path file : stream) {
+				try {
+					return Files.newByteChannel(file);
+				} catch (IOException e) {
+					// could not delete individual file
+				}
+			}
+		} catch (IOException e) {
+			// done
+		}
+		
+		return null;
+	}
+	
+
+	public void deleteBookCover(String bookId) {
+		AudioBook book = this.getBook(bookId);
+		if(book == null || book.getId() == null || book.getId().isEmpty()) {
+			return;
+		}
+		
+		// get path to book
+		Path bookPath = this.getBookPath(bookId);
+		
+		// delete other cover files
+		DirectoryStream.Filter<Path> directoryFilter = new DirectoryStream.Filter<Path>() {
+			@Override
+			public boolean accept(Path entry) throws IOException {
+				return Files.isRegularFile(entry) && entry.getFileName().toString().startsWith("cover");
+			}		
+		};
+		
+		// stream list of covers to delete
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(bookPath, directoryFilter)) {
+			for(Path file : stream) {
+				try {
+					Files.deleteIfExists(file);
+				} catch (IOException e) {
+					// could not delete individual file
+				}
+			}
+		} catch (IOException e) {
+			// done
+		}		
+	}
+	
 	public Path getBookPath(String bookId) {
 		String homePath = this.configuration.getString(ConfigurationProvider.KEY_HOME_DIR, ConfigurationProvider.DEFAULT_HOME_DIR);
 		Path path = Paths.get(homePath, AudioBookProvider.BOOKS_PATH);
@@ -298,5 +403,5 @@ public class AudioBookProvider {
 		bookPath = bookPath.normalize();
 		return bookPath;
 	}
-	
+
 }

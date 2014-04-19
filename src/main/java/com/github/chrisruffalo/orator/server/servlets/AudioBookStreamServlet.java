@@ -39,10 +39,10 @@ import com.github.chrisruffalo.orator.model.ReadingSession;
  * @link http://balusc.blogspot.com/2009/02/fileservlet-supporting-resume-and.html
  */
 @WebServlet(
-	displayName="oration2", 
+	displayName="oration", 
 	asyncSupported=true, 
 	description="orates books", 
-	name="oration2", 
+	name="oration", 
 	urlPatterns={
 		"/services/secured/orate",
 		"/services/secured/orate*"

@@ -6,7 +6,8 @@ var orator = angular.module('orator',
 	 'xeditable', 				// edit values in-place
 	 'angularFileUpload',		// file upload
 	 'mediaPlayer',				// plays audio (and video, but no need)
-	 'ui.sortable'			  	// sortable file list
+	 'ui.sortable',			  	// dragable sortable file list
+	 'ui.knob'					// ui visible knob/progress
 	]
 );
 
@@ -61,34 +62,3 @@ orator.config(function($stateProvider, $urlRouterProvider){
     })
 	;
 });
-
-// global routes for the application
-/*
-orator.config(['$routeProvider',
-    function($routeProvider) {
-        $routeProvider.
-	        when('/books', {
-	            templateUrl: 'app/templates/books.html',
-	            controller: 'BookTableController'
-        }).
-	        when('/book', {
-	            templateUrl: 'app/templates/book.html',
-	            controller: 'BookViewController'
-        }).
-	        when('/book/:id', {
-	            templateUrl: 'app/templates/book.html',
-	            controller: 'BookViewController'
-        }).
-            when('/sessions', {
-                templateUrl: 'app/templates/sessions.html',
-                controller: 'SessionTableController'
-        }).
-	        when('/session/:id', {
-	            templateUrl: 'app/templates/session.html',
-	            controller: 'SessionViewController'
-	    }).
-            otherwise({
-                redirectTo: '/book'
-        });
-}]);
-*/

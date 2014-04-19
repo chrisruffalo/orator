@@ -20,17 +20,17 @@ import com.github.chrisruffalo.orator.core.providers.AudioBookProvider;
 import com.github.chrisruffalo.orator.model.AudioBook;
 
 @WebServlet(
-	displayName="audioBookUpload", 
+	displayName="audioBookCoverUpload", 
 	asyncSupported=true, 
-	description="upload audio books", 
-	name="audioBookUpload", 
+	description="upload audio book cover", 
+	name="audioBookCoverUpload", 
 	urlPatterns={
-		"/services/secured/audioBookUpload",
-		"/services/secured/audioBookUpload*"
+		"/services/secured/audioBookCoverUpload",
+		"/services/secured/audioBookCoverUpload*"
 	}
 )
 // originally from: https://github.com/danialfarid/angular-file-upload/blob/master/demo/src/com/df/angularfileupload/FileUpload.java
-public class AudioBookUploadServlet extends HttpServlet {
+public class BookCoverUploadServlet extends HttpServlet {
 
 	/**
 	 * 
@@ -48,7 +48,7 @@ public class AudioBookUploadServlet extends HttpServlet {
 	protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		String bookId = req.getParameter("bookId");
 		if(bookId == null || bookId.isEmpty()) {
-			res.sendError(HttpServletResponse.SC_BAD_REQUEST, "a book id is required to upload an audiobook file");
+			res.sendError(HttpServletResponse.SC_BAD_REQUEST, "a book id is required to upload an cover file");
 			return;
 		}
 
@@ -56,7 +56,7 @@ public class AudioBookUploadServlet extends HttpServlet {
 		AudioBook book = this.provider.getBook(bookId);
 		if(book == null) {
 			this.logger.error("The book id:{} was not found", bookId);
-			res.sendError(HttpServletResponse.SC_BAD_REQUEST, "an (existing) book id is required to upload an audiobook file");
+			res.sendError(HttpServletResponse.SC_BAD_REQUEST, "a book valid (existing) book id is required to upload a cover file");
 			return;
 		}
 		
@@ -64,7 +64,7 @@ public class AudioBookUploadServlet extends HttpServlet {
 			if (req.getHeader("Content-Type") != null && req.getHeader("Content-Type").startsWith("multipart/form-data")) {
 				
 				ServletFileUpload upload = new ServletFileUpload();
-				upload.setFileSizeMax(2147483648l); //2GB, some files are big!
+				upload.setFileSizeMax(52428800); //50MB, don't go crazy on image sizes
 
 				FileItemIterator iterator = upload.getItemIterator(req);
 
@@ -73,28 +73,20 @@ public class AudioBookUploadServlet extends HttpServlet {
 					
 					// this is a file
 					if(item.getName() != null) {
-						String fileName = item.getName();
-						InputStream bookStream = item.openStream();
+						InputStream coverStream = item.openStream();
 						String contentType = item.getContentType();
 						
-						// verify audio type
-						if(contentType == null || !contentType.toLowerCase().startsWith("audio")) {
-							res.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE, "an audio file is required");
-							return;
-						}
-						
-						this.logger.trace("Got book stream for fileName: {}", fileName);
-						
-						if(bookStream != null) {						
+						if(coverStream != null) {						
 							// add book track to book
-							boolean result = this.provider.addBookTrack(bookId, fileName, contentType, bookStream);
+							boolean result = this.provider.addCover(bookId, contentType, coverStream);
 							if(!result) {
-								res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "there was an error writing the audio file " + fileName);
-								return;
+								this.logger.error("Error while writing cover file for book id:{}", bookId);
+								res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "internal error while adding cover file " + item.getName());
+								return;			
 							}
 							
 							// wrote
-							this.logger.trace("Wrote book stream for fileName: {}", fileName);
+							this.logger.trace("Wrote cover for book id:{}", bookId);
 						}
 					} 					
 				}

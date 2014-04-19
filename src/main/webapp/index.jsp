@@ -49,7 +49,7 @@
 		<div class="container">
 			<div class="row">
 				<!-- body content -->
-				<div ui-view class="col-sm-12 main">
+				<div id="oratorView" ui-view class="col-sm-12 main">
 	
 				</div>
 				<!-- /end body content -->
@@ -62,6 +62,7 @@
 		<script src="./thirdparty/js/jquery-2.1.0.min.js"></script>
 		<script src="./thirdparty/js/jquery-ui-1.10.4.custom.min.js"></script>
 		<script src="./thirdparty/js/bootstrap.min.js"></script>
+		<script src="./thirdparty/js/jquery.knob.js"></script>
 				
 		<!-- angular -->
 		<script src="./thirdparty/js/angular-file-upload-html5-shim.min.js"></script>
@@ -71,6 +72,7 @@
 		<script src="./thirdparty/js/angular-xeditable.min.js"></script>
 		<script src="./thirdparty/js/angular-file-upload.min.js"></script>
 		<script src="./thirdparty/js/angular-media-player.min.js"></script>
+		<script src="./thirdparty/js/angular-knob.js"></script>
 		
 		<!-- angular ui components -->
 		<script src="./thirdparty/js/angular-ui-router.min.js"></script>

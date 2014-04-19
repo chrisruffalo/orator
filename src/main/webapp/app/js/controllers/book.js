@@ -2,6 +2,9 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 	// state variables
 	$scope.state = {};
 	$scope.editing = false;
+	$scope.coverUploadStatus = {
+		percent: 0
+	};
 	
 	// status of files being uploaded
 	$scope.fileStatus = [];
@@ -52,8 +55,6 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 				  // data: {bookId: $scope.book.id},
 	  			  file: file, // or list of files: $files for html5 only
 		      }).progress(function(evt) {
-		    	  console.log("updating percent status on index: " + localUploadStatus.index);
-		    	  console.log("i value: " + i);
 		    	  localUploadStatus.percent = parseInt(100.0 * evt.loaded / evt.total);
 				  if(localUploadStatus.percent >= 100) {
 					  localUploadStatus.state = 'complete';
@@ -76,6 +77,58 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 		      //.xhr(function(xhr){xhr.upload.addEventListener(...)})// access and attach any event listener to XMLHttpRequest.
 		      ;
 	      })(currentUploadStatus);
+	    }
+	};
+	
+	// handle file uploads when files are selected
+	$scope.onCoverFileSelect = function($files) {
+	    //$files: an array of files selected, each file has name, size, and type.
+	    if($files.length > 0) {
+	      var file = $files[0];
+	      $scope.coverUploadStatus = {
+	    	  'file': file, 
+	    	  'state': 'starting', 
+	    	  'show': true,
+	    	  'errorMessage': null
+	      };
+	      // create IIFE ... todo: make this it's own function
+	      (function() {
+	    	  $scope.coverUploadStatus.upload = $upload.upload({
+		    	  // call book upload with bookId as parameter (tried using the data block but it made the servlet MUCH more complicated)
+				  url: 'services/secured/audioBookCoverUpload?bookId=' + $scope.book.id,
+				  // send book id as value
+				  // data: {bookId: $scope.book.id},
+	  			  file: file, // or list of files: $files for html5 only
+		      }).progress(function(evt) {
+		    	  $scope.progressOptions.hidden = false;
+		    	  $scope.coverUploadStatus.percent = parseInt(100.0 * evt.loaded / evt.total);
+				  if($scope.coverUploadStatus.percent >= 100) {
+					  $scope.coverUploadStatus.state = 'complete';
+				  } else {
+					  $scope.coverUploadStatus.state = 'uploading';
+				  }
+			  }).success(function(data, status, headers, config) {
+				  $scope.coverUploadStatus.percent = 100;
+				  $scope.coverUploadStatus.state = 'complete';
+				  
+				  $timeout(function(){
+					  // hide
+					  $scope.progressOptions.hidden = true;
+					  
+					  // update img src
+					  $scope.imgUpdate = Date.now();
+					  
+				  }, 1000); // at least 1 second before removing
+		      })
+		      .error(function(){
+		    	  $scope.coverUploadStatus.state = 'error';
+		    	  $scope.coverUploadStatus.errorMessage = 'Upload ended unexpectedly';
+		    	  $scope.progressOptions.hidden = true;
+		      })
+		      //.then(success, error, progress); 
+		      //.xhr(function(xhr){xhr.upload.addEventListener(...)})// access and attach any event listener to XMLHttpRequest.
+		      ;
+	      })();
 	    }
 	};
 	
@@ -156,14 +209,6 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 		forcePlaceholderSize: true,
 		placeholder: "sortable-placeholder",
 		tolerance: "pointer",
-		
-		// callbacks
-		update : function(e, ui) {
-			//nothing
-		},
-		stop : function(e, ui) {
-			//nothing
-		}
 	};
 	
 	// editing controls
@@ -175,7 +220,7 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 		$scope.backupTracks = angular.copy($scope.book.bookTracks);
 		
 		// switch to editing mode
-		$scope.editing = true;
+		$scope.tracksEditing = true;
 	};
 	
 	$scope.resetTracks = function() {
@@ -194,7 +239,7 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 		$scope.resetTracks();
 		
 		// switch to editing mode
-		$scope.editing = false;
+		$scope.tracksEditing = false;
 	};
 	
 	$scope.saveTracks = function() {
@@ -205,7 +250,21 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 		$scope.doSaveTracks();
 		
 		// switch from editing mode
-		$scope.editing = false;
+		$scope.tracksEditing = false;
+	};
+	
+	// delete cover(s)
+	$scope.deleteCover = function() {
+		Books.deleteCover({bookId: $scope.book.id}, function(){
+			// update cover
+			$scope.imgUpdate = Date.now();
+		});
+	};
+	
+	$scope.progressOptions = {
+		readOnly: true,
+		displayInput: false,
+		hidden: true
 	};
 	
 	// load from route params

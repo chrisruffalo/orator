@@ -11,7 +11,8 @@ orator.factory("Books", function ($resource) {
     			
     			// delete
     			'deleteBook':  {method: 'DELETE', isArray:true, url: "services/secured/books/:bookId/delete", params: {bookId: "@id"}},
-    			'deleteTrack': {method: 'DELETE', url: "services/secured/books/:bookId/deleteTrack/:trackId", params: {bookId: "", trackId: ""}}
+    			'deleteTrack': {method: 'DELETE', url: "services/secured/books/:bookId/deleteTrack/:trackId", params: {bookId: "", trackId: ""}},
+    			'deleteCover': {method: 'DELETE', url: "services/secured/books/:bookId/cover/delete", params: {bookId: "@id"}}
 			}
     );    
 });

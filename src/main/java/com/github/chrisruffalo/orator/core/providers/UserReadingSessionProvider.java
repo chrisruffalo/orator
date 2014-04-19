@@ -7,6 +7,7 @@ import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -94,7 +95,26 @@ public class UserReadingSessionProvider {
 		session.setBookId(bookId);
 		session.setOwner(userName);
 		session.setSecondsOffset(0);
-		session.setSessionName("New Session");
+		final String baseName = "New Session - " + book.getTitle();
+		String name = baseName;
+		
+		// make sure no session exists with the same name
+		List<ReadingSession> exsistingSessions = this.getSessions();
+		Iterator<ReadingSession> sessionIt = exsistingSessions.iterator();
+		int i = 1;	
+		while(sessionIt.hasNext()) {
+			ReadingSession checkSession = sessionIt.next();
+			if(checkSession.getSessionName().equalsIgnoreCase(name)) {
+				// change name and increment i
+				name = baseName + " (" + i++ + ")";
+				
+				// reset iteration
+				sessionIt = exsistingSessions.iterator();
+			}
+		}
+		
+		// set name
+		session.setSessionName(name);
 		
 		// write session
 		this.write(session);
@@ -154,36 +174,6 @@ public class UserReadingSessionProvider {
 			this.logger.error("Error while writing new session for user '{}': {}", userName, e.getMessage());
 			throw new WebApplicationException(500);
 		}
-	}
-	
-	public boolean lockSession(String id) {
-		ReadingSession session = this.getSession(id);
-		if(session == null) {
-			return false;
-		}
-		// get username
-		String userName = this.subject.getPrincipal().toString();
-		
-		// path to lock
-		Path toSessions = this.reading.getUserSessionDir(userName);
-		Path lockPath = toSessions.resolve("session-" + id + ".lock");
-		
-		// a lock exists.. eventually we will need to garbage collect
-		// these here, with some sort of session time out
-		if(Files.exists(lockPath)) {
-			return false;
-		}
-		
-		// write
-		try {
-			Files.write(lockPath, String.valueOf(System.currentTimeMillis()).getBytes());
-			return true;
-		} catch (IOException e) {
-			this.logger.error("Could not write lock file for session id '{}': {}", id, e.getMessage());
-		}
-		
-		// if it falls to here then we couldn't lock the file
-		return false;
 	}
 	
 	public ReadingSession getSession(String id) {
