@@ -69,6 +69,7 @@ public class BookCoverServlet extends HttpServlet {
 		
 		// if no channel found, redirect to asset
 		if(coverChannel == null) {
+			this.logger.warn("no cover set for book id:{}", bookId);
 			response.sendRedirect(request.getContextPath() + "/assets/book.jpg");
 			return;
 		}
@@ -80,7 +81,9 @@ public class BookCoverServlet extends HttpServlet {
 		long length = ByteStreams.copy(coverChannel, output);
 		
 		// done
-		if(length < Files.size(this.provider.getBookPath(bookId))) {
+		long size = Files.size(this.provider.getBookPath(bookId));
+		if(length < size) {
+			this.logger.warn("only wrote {} of {} bytes for book id:{}", length, size, bookId);
 			response.sendRedirect(request.getContextPath() + "/assets/book.jpg");
 		}
 		
