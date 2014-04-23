@@ -28,10 +28,14 @@
 			 	 </div>
 			 	 <div class="col-sm-4 col-xs-8">
 			 	 	 <div clas="row">
+			 	 	 	<form  novalidate editable-form name="bookForm" onaftersave="saveMetadata()">
+
 			 	 	 	<!-- allow editing -->
 			 	 	 	<div class="col-sm-10">
-					 		<div><a href="#" class="in-place-edit" onaftersave="saveMetadata()" editable-text="book.title">{{book.title}}</a></div>
-					 		<div><a href="#" class="in-place-edit" onaftersave="saveMetadata()" editable-text="book.author">{{book.author}}</a></div>
+					 		<div><span class="in-place-edit" e-name="bookForm" editable-text="book.title">{{book.title}}</span></div>
+					 		<div><span class="in-place-edit" e-name="bookForm" editable-text="book.author">{{book.author}}</span></div>
+					 		<button ng-if="!tracksEditing && bookForm.$visible" class="btn btn-small btn-default" ng-click="bookForm.$cancel()">cancel</button>
+					 		&nbsp;<button ng-if="!tracksEditing && bookForm.$visible" class="btn btn-small btn-primary" type="submit">save</button>
 					 	</div>
 					 	
 					 	<!-- breaker on small layout -->
@@ -39,8 +43,10 @@
 					 	
 					 	<!-- in place editing controls -->
 					 	<div class="col-sm-1">
-					 		<button ng-if="!tracksEditing" class="btn btn-small btn-default">edit</button>
+					 		<button ng-if="!tracksEditing && !bookForm.$visible" class="btn btn-small btn-default" ng-click="bookForm.$show()">edit</button>			 		
 					 	</div>
+					 	
+					 	</form>
 					 </div>
 				 </div>
 			 	 <div class="col-sm-4 col-xs-12 col-xs-offset-0">
@@ -65,7 +71,7 @@
 					 		track
 						 	</th>
 					 	<th class="orator-table-header">
-					 		file name
+					 		name
 					 	</th>
 					 	<th class="orator-table-header hidden-xs">
 					 		size
@@ -84,7 +90,7 @@
 			 	<tbody id="trackTable" ui-sortable="sortableOptions" ng-model="book.bookTracks">
 			 		<tr ng-repeat="bookTrack in book.bookTracks">
 			 			<td class="col-sm-1 col-xs-1 text-right">
-			 				<i ng-if="tracksEditing && book.bookTracks > 1" class="fa fa-bars grabber pull-left"></i>
+			 				<i ng-if="tracksEditing && book.bookTracks.length > 1" class="fa fa-bars grabber pull-left"></i>
 			 				{{$index + 1}}
 			 			</td>
 			 			<td class="col-sm-4 col-xs-7">

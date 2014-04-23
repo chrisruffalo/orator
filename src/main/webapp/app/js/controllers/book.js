@@ -168,21 +168,12 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 	
 	// save
 	$scope.saveMetadata = function() {
-		// if already counting down to save, cancel countdown in favor of
-		// counting down for new model
-		if($scope.saveMetadataTimer) {
-			$timeout.cancel($scope.saveMetadataTimer);
-		}
-		
-		// start countdown to save
-		$scope.saveMetadataTimer = $timeout(function() {
-			// save (and update state)
-			$scope.state.saving = true;
-			var saveBook = Books.save($scope.book, {updateTracks: false}, function() {
-				$scope.book = saveBook;
-				$scope.state.saving = false;
-			});
-		}, 200); // only save if 200ms have passed since the last time a save has been requested
+		// save (and update state)
+		$scope.state.saving = true;
+		var saveBook = Books.save($scope.book, {updateTracks: false}, function() {
+			$scope.book = saveBook;
+			$scope.state.saving = false;
+		});
 	};
 
 	// save

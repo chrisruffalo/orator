@@ -63,7 +63,7 @@ public class UserReadingSessionService {
 		try {
 			secondsParsed = (new BigDecimal(seconds)).longValue();
 		} catch (Exception ex) {
-			this.logger.warn("Could not parse seconds offset to update session info: {}", ex.getLocalizedMessage());
+			this.logger.warn("Could not parse seconds offset (from value '{}') to update session info: {}", seconds, ex.getLocalizedMessage());
 		}
 		
 		// no change if seconds is less than 1

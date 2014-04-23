@@ -218,7 +218,7 @@ public class UserReadingSessionProvider {
 		session.setSecondsOffset(seconds);
 		
 		// update
-		this.logger.trace("Updated session {} to use track {} at offset {}", sessionId, trackId, seconds);
+		this.logger.info("Updated session {} for user {} to use track {} at offset {}", new Object[]{sessionId, SubjectUtil.name(this.subject), trackId, seconds});
 		
 		// save
 		this.write(session);
