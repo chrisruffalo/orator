@@ -71,7 +71,6 @@
 		<script src="./thirdparty/js/angular-1.3.0-b5-resource.min.js"></script>
 		<script src="./thirdparty/js/angular-xeditable.min.js"></script>
 		<script src="./thirdparty/js/angular-file-upload.min.js"></script>
-		<script src="./thirdparty/js/angular-media-player.min.js"></script>
 		<script src="./thirdparty/js/angular-knob.js"></script>
 		
 		<!-- angular ui components -->
@@ -85,6 +84,7 @@
 		<!-- orator shared angular/application logic -->
 		<script src="./app/js/orator.js"></script>
 		<script src="./app/js/directives/format.js"></script>
+		<script src="./app/js/directives/audio.js"></script>
 		<script src="./app/js/services/books.service.js"></script>
 		<script src="./app/js/services/sessions.service.js"></script>
 		

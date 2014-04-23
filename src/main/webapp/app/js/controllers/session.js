@@ -1,4 +1,4 @@
-orator.controller('SessionViewController', function ($scope, $state, $stateParams, $http, $upload, $timeout, $interval, Sessions) {
+orator.controller('SessionViewController', function ($scope, $state, $stateParams, $http, $upload, $timeout, $interval, player, Sessions) {
 
 	$scope.fileStatus = [];
 	$scope.syncComplete = false;
@@ -7,6 +7,9 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 	$scope.session = {};
 	$scope.session.book = {};
 	$scope.session.book.bookTracks = [];
+
+	// make player available to scope
+	$scope.player = player;
 	
 	// handle loading/finding of book
 	$scope.load = function() {
@@ -37,20 +40,15 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 		
 		// bulid playlist source elements from tracks
 		for(var index = 0; index < $scope.session.book.bookTracks.length; index++) {
-			// get track from track list
-			var track = $scope.session.book.bookTracks[index];
-			
-			// construct playlist item
-			track.src = "./services/secured/orate?sessionId=" + $scope.session.id + "&trackId=" + track.id; 
-			track.type = track.contentType;
+			var track = $scope.session.book.bookTracks[index]; 
 			
 			// determine current track
 			if(track.id == $scope.session.currentTrackId) {
 				currentTrack = index;
-				track.active = true;
-			} else {
-				track.active = false;
 			}
+			
+			track.session = $scope.session;
+			player.playlist.add(track);
 		}
 		
 		// mark first track as active if available
@@ -58,9 +56,6 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 			$scope.session.book.bookTracks[0].active = true;
 			$scope.session.currentTrackId = $scope.session.book.bookTracks[0].id;
 		}
-		
-		//console.dir($scope.session);
-		//console.dir($scope.session.book);
 	};
 	
 	$scope.getPlayingTrackIndex = function() {
@@ -68,16 +63,11 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 			return $scope.getSessionTrackIndex();			
 		}
 		
-		if(!$scope.audioPlayer) {
+		if(!player) {
 			return 0;
 		}
-		
-		// get current track
-		var index = $scope.audioPlayer.currentTrack;
-		if(index >= 1) {
-			index = index - 1;
-		}
-		return index;
+	
+		return player.index();
 	};
 	
 	// return the index that should be used based on the session value
@@ -88,44 +78,27 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 			
 			// determine current track
 			if(track.id == $scope.session.currentTrackId) {
+				//console.log('session current track at index: ' + index + ' (with session current track id: ' + $scope.session.currentTrackId + ')');
 				return index;
 			}
 		}
-		
+		//console.log('no current track found for id ' + $scope.session.currentTrackId);
 		return 0;
 	};
 	
 	$scope.getPlayingTrack = function() {
 		if(!$scope.syncComplete) {
 			return $scope.session.book.bookTracks[$scope.getSessionTrackIndex()];
-		}
-		
-		var index = $scope.getPlayingTrackIndex();
-		if(index < 0) {
-			return {lengthSeconds: 0};
-		}
-		return $scope.session.book.bookTracks[index];
-	};
-	
-	$scope.updatePlayingTrack = function() {
-		// clear
-		angular.forEach($scope.session.book.bookTracks, function(value, key) {
-			value.active = false;
-		});
-		
-		// get current index
-		var currentTrack = $scope.getPlayingTrack();
-		if(currentTrack) {
-			currentTrack.active = true;
 		}		
+		return player.current();
 	};
 	
 	// gets the best guess at the current time
 	$scope.getCurrentTime = function(hard) {
 		var currentTime = 0;
 		
-		if($scope.audioPlayer) {
-			currentTime = $scope.audioPlayer.currentTime;
+		if(player) {
+			currentTime = player.time();
 		}
 		
 		// hard return means a forced query against the player
@@ -134,7 +107,7 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 		}
 		
 		// if not playing or the session says otherwise, use session time as current time
-		if(!$scope.syncComplete && $scope.session && $scope.session.secondsOffset > currentTime) {
+		if(!$scope.syncComplete && $scope.session) {
 			currentTime = $scope.session.secondsOffset;
 		}
 		
@@ -151,7 +124,7 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 		}
 		
 		// don't update if no playing is going on
-		if(!$scope.audioPlayer || !$scope.session.book.bookTracks || !$scope.session.book.bookTracks.length) {
+		if(!player || !$scope.session.book.bookTracks || !$scope.session.book.bookTracks.length) {
 			//console.log('no audio player, playlist, or playlist length');
 			return;
 		}
@@ -160,7 +133,7 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 		var currentTrack = $scope.getPlayingTrack();
 		
 		// get current time
-		var currentTime = $scope.audioPlayer.currentTime;
+		var currentTime = $scope.getCurrentTime(true);
 		currentTime = Math.floor(currentTime);
 		
 		// if the current track and the playing track are the same
@@ -179,6 +152,8 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 				//console.log('force is: (' + force + ') and session time is ahead of or the same as current play time');
 				return;
 			}
+		} else {
+			//console.log('updating with track id: ' + currentTrack.id);
 		}
 		
 		// only send 0 if forced
@@ -193,9 +168,6 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 			var localSession = Sessions.update({sessionId: $scope.session.id, trackId: currentTrack.id}, currentTime, function(){
 				// save local session
 				$scope.session = localSession;
-				
-				// update the currently playing track
-				$scope.updatePlayingTrack();
 			}, function() {
 				console.log('error while updating session progress');
 			});
@@ -206,33 +178,33 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 	
 	$scope.play = function() {
 		// don't do anything if already playing
-		if($scope.audioPlayer.playing) {
+		if(player.playing) {
 			return;
 		}
 		
 		if(!$scope.syncComplete) {
+			// get session track index from session
 			var trackIndex = $scope.getSessionTrackIndex();
-			var track = $scope.session.book.bookTracks[trackIndex];
+			
+			// seek to
+			player.seek($scope.session.secondsOffset);
+
+			//console.log('starting from beginning and wanting to set track : ' + trackIndex + ' at time ' + $scope.session.secondsOffset);
 			
 			// start play (at track index);
-			$scope.audioPlayer.load(track, true);
+			player.play(trackIndex);
 	
-			// sync with session, multiple attempts, very fast
-			$scope.syncWithSession(track); 
+			// make sync complete
+			$scope.syncComplete = true;
 		} else {
 			// a simple play will suffice
-			$scope.audioPlayer.play();
+			player.play();
 		}
 		
 	};
 	
-	$scope.syncWithSession = function(track) {
-		// seek, and try 50 times
-		$scope.seekTo($scope.session.secondsOffset, "start", 50, true, track);
-	};
-	
 	$scope.pause = function() {
-		$scope.audioPlayer.pause();
+		player.pause();
 		
 		// force update after 100ms
 		$timeout(function(){
@@ -241,31 +213,11 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 	};
 	
 	$scope.nextTrack = function() {
-		var next = $scope.getPlayingTrackIndex();
-		$scope.session.book.bookTracks[next].active = false;
-		
-		next++;
-		if(next > ($scope.session.book.bookTracks.length - 1)) {
-			next = $scope.session.book.bookTracks.length - 1;
-		}
-		
-		var track = $scope.session.book.bookTracks[next];
-		$scope.audioPlayer.load(track, true);
-		track.active = true;
+		player.next();
 	};
 	
 	$scope.previousTrack = function() {
-		var prev = $scope.getPlayingTrackIndex();
-		$scope.session.book.bookTracks[prev].active = false;
-		
-		prev--;
-		if(prev < 0) {
-			prev = 0;
-		}
-		
-		var track = $scope.session.book.bookTracks[prev];
-		$scope.audioPlayer.load(track, true);
-		track.active = true;
+		player.previous();
 	};
 	
 	$scope.seekForward = function(time) {
@@ -287,7 +239,7 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 		$scope.seekTo(time, "now");
 	};
 	
-	$scope.seekTo = function(seconds, from, tries, forcePlay, track) {
+	$scope.seekTo = function(seconds, from, tries, forcePlay, trackIndex) {
 		
 		// set defaults
 		if(typeof(from) == 'undefined') { from = "start"; }
@@ -296,7 +248,7 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 		
 		// abort when tries is too many
 		if(tries < 1) {
-			console.log('remaining tries is less than 1');
+			//console.log('remaining tries is less than 1');
 			return;
 		}
 		
@@ -323,17 +275,17 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 		
 		// do seek
 		try {
-			$scope.audioPlayer.seek(seekTime);
+			player.seek(seekTime);
 			//console.log('completed seek to: ' + seekTime + ' from: ' + from);
 			
-			if(forcePlay && !$scope.audioPlayer.playing) {
+			if(forcePlay && player.playing) {
 				// force play on proper track
-				if(typeof(track) != 'undefined') {
-					console.log('playing specified track index');
-					$scope.audioPlayer.load(track, true);
+				if(typeof(trackIndex) != 'undefined') {
+					//console.log('playing specified track index');
+					player.play(trackIndex);
 				} else {
-					console.log('undefined track index given');
-					$scope.audioPlayer.play();
+					//console.log('undefined track index given');
+					player.play();
 				}
 			}
 			
@@ -345,7 +297,7 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 			
 			// seek again, but 50ms later
 			$timeout(function(){
-				$scope.seekTo(seconds, from, --tries, forcePlay, track); 
+				$scope.seekTo(seconds, from, --tries, forcePlay, trackIndex); 
 			}, 50);
 			// stop doing, and return
 			return;

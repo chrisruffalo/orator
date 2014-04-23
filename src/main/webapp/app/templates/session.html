@@ -41,9 +41,6 @@
 			<!-- status/position -->
 			<div class="row">
 				<div class="col-xs-12 text-center">
-					<!-- audio playing element -->
-					<audio media-player="audioPlayer"></audio>
-				
 					<!-- basic info -->
 					<p>{{getPlayingTrackIndex() + 1}} of {{session.book.bookTracks.length}}</p>
 					<p><i class="fa fa-volume-up"></i> {{getPlayingTrack().fileName}}</p>
@@ -61,8 +58,8 @@
 					<button class="btn btn-md btn-primary" ng-click="seekBackward()"><i class="fa fa-backward"></i></button>
 					
 					<!-- play/pause -->
-					<button ng-if="!audioPlayer.playing" class="btn btn-md btn-primary" ng-click="play()"><i class="fa fa-play"></i></button>
-					<button ng-if="audioPlayer.playing" class="btn btn-md btn-primary" ng-click="pause()"><i class="fa fa-pause"></i></button>
+					<button ng-if="!player.playing" class="btn btn-md btn-primary" ng-click="play()"><i class="fa fa-play"></i></button>
+					<button ng-if="player.playing" class="btn btn-md btn-primary" ng-click="pause()"><i class="fa fa-pause"></i></button>
 					
 					<!-- quick seek forward -->
 					<button class="btn btn-md btn-primary" ng-click="seekForward()"><i class="fa fa-forward"></i></button>
@@ -99,8 +96,8 @@
 			 	<tbody>
 			 		<tr ng-repeat="track in session.book.bookTracks">
 			 			<td class="col-sm-1 col-xs-1 text-right">
-			 				<i ng-if="track.active && audioPlayer.playing" class="fa fa-play pull-left"></i>
-			 				<i ng-if="track.active && !audioPlayer.playing" class="fa fa-pause pull-left"></i>
+			 				<i ng-if="track.active && player.playing" class="fa fa-play pull-left"></i>
+			 				<i ng-if="track.active && !player.playing" class="fa fa-pause pull-left"></i>
 			 				{{$index + 1}}
 			 			</td>
 			 			<td class="col-sm-4 col-xs-8">
@@ -113,4 +110,9 @@
 			 	</tbody>
 			 </table>
 		</div>
+</div>
+
+<!-- where the audio goes -->
+<div class="hidden" id="audioContainer">
+	<!-- no content until audio element is created -->
 </div>
