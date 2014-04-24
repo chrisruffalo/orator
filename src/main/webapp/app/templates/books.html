@@ -31,15 +31,12 @@
 					 		<!-- play controls -->
 					 	</th>
 					 	<th class="orator-table-header">
-					 		author
+					 		book
 					 	</th>
-					 	<th class="orator-table-header">
-					 		title
-					 	</th>
-					 	<th class="orator-table-header">
+					 	<th class="orator-table-header text-right">
 					 		size
 					 	</th>
-					 	<th class="orator-table-header">
+					 	<th class="orator-table-header text-right">
 					 		duration
 					 	</th>
 					 	<th class="orator-table-header">
@@ -52,22 +49,18 @@
 			 			<td class="1">
 			 				<button class="btn btn-xs btn-success" ng-click="read(book)">go read!</button>
 			 			</td>
-			 			<td class="col-xs-3">
-			 				{{book.author}}
+			 			<td class="col-xs-5">
+			 				{{book.author}} - <a ui-sref="book({bookId: book.id})">{{book.title}}</a>
 			 			</td>
-			 			<td class="col-xs-3">
-			 				{{book.title}}
-			 			</td>
-			 			<td class="col-xs-1">
+			 			<td class="col-xs-2 text-right">
 			 				{{book.size | orator.bytes}}
 			 			</td>
-			 			<td class="col-xs-2">
+			 			<td class="col-xs-3 text-right">
 			 				{{book.time | orator.seconds}}
 			 			</td>
-			 			<td class="col-xs-2">
+			 			<td class="col-xs-1 text-right">
 			 				<!-- controls -->
-			 				<button class="btn btn-xs btn-primary" ng-click="details(book)">details</button>
-			 				<button class="btn btn-xs btn-danger" ng-click="deleteBook(book)">delete</button>
+			 				<button class="btn btn-xs btn-danger" ng-click="deleteBook(book)"><i class="fa fa-times-circle"></i></button>
 			 			</td>
 			 		</tr>
 			 	</tbody>

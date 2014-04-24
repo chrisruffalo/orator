@@ -32,10 +32,21 @@
 
 			 	 	 	<!-- allow editing -->
 			 	 	 	<div class="col-sm-10">
-					 		<div><span class="in-place-edit" e-name="bookForm" editable-text="book.title">{{book.title}}</span></div>
-					 		<div><span class="in-place-edit" e-name="bookForm" editable-text="book.author">{{book.author}}</span></div>
-					 		<button ng-if="!tracksEditing && bookForm.$visible" class="btn btn-small btn-default" ng-click="bookForm.$cancel()">cancel</button>
-					 		&nbsp;<button ng-if="!tracksEditing && bookForm.$visible" class="btn btn-small btn-primary" type="submit">save</button>
+			 	 	 		<div class="row col-push-down">
+			 	 	 			<div class="col-xs-12 col-push-down">
+					 				<span class="in-place-edit" e-name="bookForm" editable-text="book.title">{{book.title}}</span>
+					 			</div>
+					 			<div class="col-xs-12">
+					 				<span class="in-place-edit" e-name="bookForm" editable-text="book.author">{{book.author}}</span>
+					 			</div>
+					 		</div>
+					 		<div class="row">
+					 			<div class="col-xs-12">
+						 			<button ng-if="!tracksEditing && bookForm.$visible" class="btn btn-small btn-primary pull-right" type="submit">save</button>
+						 			
+					 				<button ng-if="!tracksEditing && bookForm.$visible" class="btn btn-small btn-default" ng-click="bookForm.$cancel()">cancel</button>
+					 			</div>
+					 		</div>
 					 	</div>
 					 	
 					 	<!-- breaker on small layout -->
@@ -43,7 +54,7 @@
 					 	
 					 	<!-- in place editing controls -->
 					 	<div class="col-sm-1">
-					 		<button ng-if="!tracksEditing && !bookForm.$visible" class="btn btn-small btn-default" ng-click="bookForm.$show()">edit</button>			 		
+					 		<button ng-if="!tracksEditing && !bookForm.$visible" class="btn btn-small btn-default pull-right" ng-click="bookForm.$show()">edit</button>			 		
 					 	</div>
 					 	
 					 	</form>
