@@ -171,10 +171,8 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 	// save
 	$scope.saveMetadata = function() {
 		// save (and update state)
-		$scope.state.saving = true;
-		var saveBook = Books.save($scope.book, {updateTracks: false}, function() {
+		var saveBook = Books.save($scope.book, function() {
 			$scope.book = saveBook;
-			$scope.state.saving = false;
 		});
 	};
 
