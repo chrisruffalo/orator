@@ -66,10 +66,12 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 			  }).success(function(data, status, headers, config) {
 		    	localUploadStatus.percent = 100;
 		    	localUploadStatus.state = 'complete';
-	        	$scope.deferedLoad($scope.book.id);	    	
-		    	localUploadStatus.removal = $timeout(function() {
-		        	$scope.removeFileStatus(localUploadStatus);	  
-		        }, 180000); // wait 3 minutes until removal
+		    	if($scope.book.id) {
+		        	$scope.deferedLoad($scope.book.id);	    	
+			    	localUploadStatus.removal = $timeout(function() {
+			        	$scope.removeFileStatus(localUploadStatus);	  
+			        }, 180000); // wait 3 minutes until removal
+		    	}
 		      })
 		      .error(function(){
 		    	 localUploadStatus.state = 'error';
