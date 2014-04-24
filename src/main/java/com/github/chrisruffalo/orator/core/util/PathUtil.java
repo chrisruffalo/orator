@@ -22,8 +22,12 @@ public final class PathUtil {
 	}
 	
 	public static Path getDirectoryPath(String type, Path targetPath) {
+		return PathUtil.getDirectoryPath(type, targetPath, true);
+	}
+	
+	public static Path getDirectoryPath(String type, Path targetPath, boolean create) {
 		Path path = targetPath.normalize();
-		if(Files.exists(path) && !Files.isDirectory(path)) {
+		if(create && Files.exists(path) && !Files.isDirectory(path)) {
 			try {
 				boolean result = Files.deleteIfExists(path);
 				if(!result) {
@@ -41,7 +45,7 @@ public final class PathUtil {
 				}
 			}
 		}		
-		if(!Files.exists(path)) {
+		if(create && !Files.exists(path)) {
 			try {
 				path = Files.createDirectories(path);
 			} catch (IOException e) {

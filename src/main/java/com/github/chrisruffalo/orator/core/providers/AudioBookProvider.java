@@ -56,7 +56,7 @@ public class AudioBookProvider {
 		String homePath = this.configuration.getString(ConfigurationProvider.KEY_HOME_DIR, ConfigurationProvider.DEFAULT_HOME_DIR);
 		Path path = Paths.get(homePath, AudioBookProvider.BOOKS_PATH);
 		Path bookPath = path.resolve(bookId);
-		bookPath = PathUtil.getDirectoryPath("books", bookPath);
+		bookPath = PathUtil.getDirectoryPath("books", bookPath, false);
 		
 		// look for file
 		Path bookDescriptor = bookPath.resolve("book.json");
