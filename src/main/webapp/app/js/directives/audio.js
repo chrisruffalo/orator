@@ -9,11 +9,11 @@ orator.factory('player', function(audio, $timeout, $rootScope) {
       album: 0,
       track: 0
     };
-    
+
+    // keep trying to seek until successful
     var stubbornSeek = function(toTime) {
 		try {
     		audio.currentTime = toTime;
-    		console.log('forwarding playhead to: ' + syncTime);
     		player.synced = true;
     		syncTime = 0;
 		} catch (e) {

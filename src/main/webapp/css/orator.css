@@ -84,3 +84,14 @@ body {
 .angular-knob-container {
 	position: absolute;
 }
+
+/* time picker */
+.time-control-value {
+	width: 14% !important;
+	display: inline-block !important;
+}
+
+.time-control-direction {
+	width: 40% !important;
+	display: inline-block !important;
+}

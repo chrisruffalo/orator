@@ -43,20 +43,20 @@
 
 <!-- player -->
 <div class="row">
-		<div class="col-xs-12 col-sm-4 details-well">
+		<div class="col-xs-12 col-sm-5 details-well">
 			
 			<!-- status/position -->
 			<div class="row">
 				<div class="col-xs-12 text-center">
 					<!-- basic info -->
-					<p>{{getPlayingTrackIndex() + 1}} of {{session.book.bookTracks.length}}</p>
+					<p>Track #{{getPlayingTrackIndex() + 1}} of {{session.book.bookTracks.length}}</p>
 					<p><i class="fa fa-volume-up"></i> {{getPlayingTrack().fileName}}</p>
 					<p><i class="fa fa-clock-o"></i> {{getCurrentTime() | orator.seconds}} (of {{getPlayingTrack().lengthSeconds | orator.seconds}})</p>
 				</div>
 			</div>
 			
 			<!-- controls -->
-			<div class="row">
+			<div class="row col-push-down">
 				<div class="col-xs-12 text-center">
 					<!-- next track -->
 					<button class="btn btn-md btn-primary" ng-click="previousTrack()"><i class="fa fa-step-backward"></i></button>
@@ -73,19 +73,36 @@
 										
 					<!-- previous track -->
 					<button class="btn btn-md btn-primary" ng-click="nextTrack()"><i class="fa fa-step-forward"></i></button>
+					
+					<!-- toggle advanced controls -->
+					<button class="btn btn-md"  ng-class="{'btn-primary': !showSkip, 'btn-default': showSkip}" ng-click="toggleSkip()">
+						<i class="fa" ng-class="{'fa-ellipsis-h': !showSkip, 'fa-sort-up': showSkip}"></i>
+					</button>
 				</div>
 			</div>
 			
 			<!-- advanced seek controls -->
-			<div class="row">
-				<div class="col-xs-12 text-center">
-
-				</div>
+			<div ng-if="showSkip" class="row">
+				<form class="form-inline" name="rocket">
+					<div class="col-xs-12 text-center">
+						<input ng-model="rocketSeek.hours" type="text" class="form-control time-control-value" name="hours" placeholder="HH"> :
+						<input ng-model="rocketSeek.minutes" type="text" class="form-control time-control-value" name="minutes" placeholder="MM"> :
+						<input ng-model="rocketSeek.seconds" type="text" class="form-control time-control-value" name="seconds" placeholder="SS">&nbsp;
+						<button class="btn btn-md btn-success" ng-disabled="rocket.$pristine || rocket.$invalid" ng-click="rocketSeeker()">
+							<i class="fa fa-rocket"></i>
+						</button>&nbsp;
+						<select name="from" ng-model="rocketSeek.from" class="form-control time-control-direction">
+				    		<option value="start">from start</option>
+				    		<option value="end">from end</option>
+				    		<option value="now">from now</option>
+				    	</select>					    
+					</div>
+				</form>
 			</div>
 			
 		</div>
 		
-		<div class="col-xs-12 col-sm-7 col-sm-offset-1 details-well">
+		<div class="col-xs-12 col-sm-6 col-sm-offset-1 details-well">
 			 <table ng-if="session.book.bookTracks" class="table table-striped table-hover table-bordered table-condensed">
 			 	<thead>
 			 		<tr>

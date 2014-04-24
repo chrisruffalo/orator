@@ -32,11 +32,7 @@ orator.controller('BookTableController', function ($rootScope, $scope, $state, $
 			$scope.books = books;
 		});
 	};
-	
-	$scope.details = function(book) {
-		$state.go('book', {bookId: book.id});
-	};
-	
+
 	$scope.read = function(book) {
 		$state.go('start-session', {bookId: book.id});
 	};

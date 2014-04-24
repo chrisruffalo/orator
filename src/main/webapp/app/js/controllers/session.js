@@ -7,6 +7,14 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 	$scope.session = {};
 	$scope.session.book = {};
 	$scope.session.book.bookTracks = [];
+	
+	// seeker defaults
+	$scope.ROCKET_SEEK_DEFAULT = {};
+	$scope.ROCKET_SEEK_DEFAULT.hours = null;
+	$scope.ROCKET_SEEK_DEFAULT.minutes = null;
+	$scope.ROCKET_SEEK_DEFAULT.seconds = null;
+	$scope.ROCKET_SEEK_DEFAULT.from = "start";
+	$scope.rocketSeek = angular.copy($scope.ROCKET_SEEK_DEFAULT);	
 
 	// make player available to scope
 	$scope.player = player;
@@ -179,6 +187,11 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 		$scope.showQR = !$scope.showQR;
 	};
 	
+	// toggle hide/show skip
+	$scope.toggleSkip = function() {
+		$scope.showSkip = !$scope.showSkip;
+	};	
+	
 	// ====================== MEDIA CONTROLS ======================
 	
 	$scope.play = function() {
@@ -244,6 +257,31 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 		$scope.seekTo(time, "now");
 	};
 	
+	// pulls seek values from form
+	$scope.rocketSeeker = function() {
+		// seek
+		console.dir($scope.rocketSeek);
+		
+		// calculate seconds
+		var seek = $scope.rocketSeek;
+		var offset = 0;
+		if(seek.hours && util.isNumber(seek.hours)) {
+			offset += seek.hours * 60 * 60;
+		}
+		if(seek.minutes && util.isNumber(seek.minutes)) {
+			offset += seek.minutes * 60;
+		}
+		if(seek.seconds && util.isNumber(seek.seconds)) {
+			offset += seek.seconds;
+		}
+		
+		// seek to
+		$scope.seekTo(offset, seek.from);
+		
+		// reset to defaults
+		$scope.rocketSeek = angular.copy($scope.ROCKET_SEEK_DEFAULT);
+	};
+	
 	$scope.seekTo = function(seconds, from, tries, forcePlay, trackIndex) {
 		
 		// set defaults
@@ -263,7 +301,10 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 			start = $scope.getCurrentTime();
 		} else if("end" == from) {
 			// measure time from the end
-			start = $scope.getCurrentTrack().lengthSeconds;
+			start = $scope.getPlayingTrack().lengthSeconds;
+			
+			// end is at...
+			console.log("end is at: " + start);
 			
 			// time from the end is measured in seconds from the end
 			// so make it negative if it isn't already
@@ -275,8 +316,11 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 		// calculate
 		var seekTime = (start * 1.0) + (seconds * 1.0);
 		seekTime = Math.floor(seekTime);
+		
+		
 		// log
-		//console.log('want to seek to: ' + seekTime);
+		console.log("difference is: " + seconds);
+		console.log('want to seek to: ' + seekTime);
 		
 		// do seek
 		try {
@@ -293,6 +337,8 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 					player.play();
 				}
 			}
+			// update session time
+			$scope.session.secondsOffset = seconds;
 			
 			// mark sync as complete if the time is changed in any case
 			$scope.syncComplete = true;

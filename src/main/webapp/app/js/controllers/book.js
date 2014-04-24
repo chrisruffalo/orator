@@ -6,6 +6,7 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 		percent: 0
 	};
 	$scope.showQR = false;
+	$scope.showSkip = false;
 	
 	// status of files being uploaded
 	$scope.fileStatus = [];
