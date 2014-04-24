@@ -19,7 +19,7 @@ import com.github.chrisruffalo.orator.model.AudioBook;
 @Path("/secured/books")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
-public class AudioBookService {
+public class AudioBookService extends AbstractResourceService {
 
 	@Inject
 	private AudioBookProvider provider;

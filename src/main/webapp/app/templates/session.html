@@ -28,7 +28,14 @@
 					<p>{{session.book.time | orator.seconds}}</p>
 				 </div>
 			 	 <div class="col-sm-2 col-xs-12 col-xs-offset-0">
-					<!-- controls? -->
+					<div class="row">
+			 	 		<div class="col-xs-12 col-push-down">
+							<button ng-if="session.id" ng-click="toggleQR()" class="btn btn-small btn-default pull-right">{{ showQR ? "hide" : "show"}} <i class="fa fa-qrcode"></i> code</button>
+						</div>
+						<div class="col-xs-12 text-center">
+							<img class="img-thumbnail" ng-if="session.id && showQR" ng-src="./services/secured/reading/{{session.id}}/qr"/>
+						</div>
+					</div>
 				 </div>
 			 </div>
 		</div>

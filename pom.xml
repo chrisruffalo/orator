@@ -83,6 +83,12 @@
 			    <artifactId>tika-java7</artifactId>
 			    <version>1.5</version>
 			</dependency>
+			
+			<dependency>
+				<groupId>net.glxn</groupId>
+				<artifactId>qrgen</artifactId>
+				<version>1.4</version>
+			</dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -105,7 +111,7 @@
         <dependency>
             <groupId>org.jboss.spec.javax.servlet</groupId>
             <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-            <scope>provided</scope>
+        	<scope>provided</scope>
         </dependency>
         
         <dependency>
@@ -155,6 +161,11 @@
 		<dependency>
 		    <groupId>org.apache.tika</groupId>
 		    <artifactId>tika-java7</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>net.glxn</groupId>
+			<artifactId>qrgen</artifactId>
 		</dependency>
 
     </dependencies>

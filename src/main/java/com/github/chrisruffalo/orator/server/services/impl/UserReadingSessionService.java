@@ -21,7 +21,7 @@ import com.github.chrisruffalo.orator.model.ReadingSession;
 
 @Path("/secured/reading")
 @Produces({MediaType.APPLICATION_JSON})
-public class UserReadingSessionService {
+public class UserReadingSessionService extends AbstractResourceService {
 
 	@Inject
 	private UserReadingSessionProvider provider;

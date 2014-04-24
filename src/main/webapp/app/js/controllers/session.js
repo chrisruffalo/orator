@@ -174,6 +174,11 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 		}
 	};
 	
+	// toggle hide/show qr code
+	$scope.toggleQR = function() {
+		$scope.showQR = !$scope.showQR;
+	};
+	
 	// ====================== MEDIA CONTROLS ======================
 	
 	$scope.play = function() {

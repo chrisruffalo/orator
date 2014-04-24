@@ -56,7 +56,20 @@
 					<p>{{book.size | orator.bytes}}</p>
 				 </div>
 			 	 <div class="col-sm-2 col-xs-12 col-xs-offset-0">
-					<button ng-if="book.id" ng-click="read()" class="btn btn-small btn-default pull-right">start new reading session</button>
+			 	 	<div class="row col-push-down">
+			 	 		<div class="col-xs-12">
+			 	 			<button ng-if="book.id" ng-click="read()" class="btn btn-small btn-default pull-right"><i class="fa fa-play"></i> new reading session</button>
+						</div>			 	 	
+			 	 	</div>
+
+			 	 	<div class="row">
+			 	 		<div class="col-xs-12 col-push-down">
+							<button ng-if="book.id" ng-click="toggleQR()" class="btn btn-small btn-default pull-right">{{ showQR ? "hide" : "show"}} <i class="fa fa-qrcode"></i> code</button>
+						</div>
+						<div class="col-xs-12 text-center">
+							<img class="img-thumbnail" ng-if="book.id && showQR" ng-src="./services/secured/books/{{book.id}}/qr"/>
+						</div>
+					</div>
 				 </div>
 			 </div>
 		</div>

@@ -5,6 +5,7 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 	$scope.coverUploadStatus = {
 		percent: 0
 	};
+	$scope.showQR = false;
 	
 	// status of files being uploaded
 	$scope.fileStatus = [];
@@ -190,6 +191,11 @@ orator.controller('BookViewController', function ($scope, $state, $stateParams, 
 		});
 	};	
 
+	// toggle hide/show qr code
+	$scope.toggleQR = function() {
+		$scope.showQR = !$scope.showQR;
+	};
+	
 	// sortable table
 	$scope.sortableOptions = {
 		// options
