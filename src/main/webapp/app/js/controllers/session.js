@@ -9,12 +9,11 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 	$scope.session.book.bookTracks = [];
 	
 	// seeker defaults
-	$scope.ROCKET_SEEK_DEFAULT = {};
-	$scope.ROCKET_SEEK_DEFAULT.hours = null;
-	$scope.ROCKET_SEEK_DEFAULT.minutes = null;
-	$scope.ROCKET_SEEK_DEFAULT.seconds = null;
-	$scope.ROCKET_SEEK_DEFAULT.from = "start";
-	$scope.rocketSeek = angular.copy($scope.ROCKET_SEEK_DEFAULT);	
+	$scope.rocketSeek = {};
+	$scope.rocketSeek.hours = null;
+	$scope.rocketSeek.minutes = null;
+	$scope.rocketSeek.seconds = null;
+	$scope.rocketSeek.from = "start";
 
 	// make player available to scope
 	$scope.player = player;
@@ -278,8 +277,10 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 		// seek to
 		$scope.seekTo(offset, seek.from);
 		
-		// reset to defaults
-		$scope.rocketSeek = angular.copy($scope.ROCKET_SEEK_DEFAULT);
+		// reset values (but leave "from" alone);
+		$scope.rocketSeek.hours = null;
+		$scope.rocketSeek.minutes = null;
+		$scope.rocketSeek.seconds = null;
 	};
 	
 	$scope.seekTo = function(seconds, from, tries, forcePlay, trackIndex) {
