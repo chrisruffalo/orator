@@ -258,9 +258,6 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 	
 	// pulls seek values from form
 	$scope.rocketSeeker = function() {
-		// seek
-		console.dir($scope.rocketSeek);
-		
 		// calculate seconds
 		var seek = $scope.rocketSeek;
 		var offset = 0;
@@ -277,10 +274,11 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 		// seek to
 		$scope.seekTo(offset, seek.from);
 		
-		// reset values (but leave "from" alone);
+		// reset values (but leave "from" alone)
 		$scope.rocketSeek.hours = null;
 		$scope.rocketSeek.minutes = null;
 		$scope.rocketSeek.seconds = null;
+		$scope.rocketSeek.from = seek.from;
 	};
 	
 	$scope.seekTo = function(seconds, from, tries, forcePlay, trackIndex) {
@@ -305,7 +303,7 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 			start = $scope.getPlayingTrack().lengthSeconds;
 			
 			// end is at...
-			console.log("end is at: " + start);
+			//console.log("end is at: " + start);
 			
 			// time from the end is measured in seconds from the end
 			// so make it negative if it isn't already
@@ -320,8 +318,8 @@ orator.controller('SessionViewController', function ($scope, $state, $stateParam
 		
 		
 		// log
-		console.log("difference is: " + seconds);
-		console.log('want to seek to: ' + seekTime);
+		//console.log("difference is: " + seconds);
+		//console.log('want to seek to: ' + seekTime);
 		
 		// do seek
 		try {
