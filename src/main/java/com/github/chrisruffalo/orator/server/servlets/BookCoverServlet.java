@@ -61,30 +61,37 @@ public class BookCoverServlet extends HttpServlet {
 			return;
 		}
 		
-		// get byte channel
-		ByteChannel coverChannel = this.provider.getCover(bookId);
-		
-		// get output stream
-		OutputStream outputStream = response.getOutputStream();
-		
-		// if no channel found, redirect to asset
-		if(coverChannel == null) {
-			this.logger.warn("no cover set for book id:{}", bookId);
-			response.sendRedirect(request.getContextPath() + "/assets/book.jpg");
-			return;
-		}
-		
-		// get output channel
-		WritableByteChannel output = Channels.newChannel(outputStream);
-		
-		// write
-		long length = ByteStreams.copy(coverChannel, output);
-		
-		// done
-		long size = Files.size(this.provider.getBookPath(bookId));
-		if(length < size) {
-			this.logger.warn("only wrote {} of {} bytes for book id:{}", length, size, bookId);
-			response.sendRedirect(request.getContextPath() + "/assets/book.jpg");
+		// get byte channel (in a way that will cause it to be closed)
+		try (ByteChannel coverChannel = this.provider.getCover(bookId)) {
+			
+			// get output stream
+			OutputStream outputStream = response.getOutputStream();
+			
+			// if no channel found, redirect to asset
+			if(coverChannel == null) {
+				this.logger.warn("no cover set for book id:{}", bookId);
+				response.sendRedirect(request.getContextPath() + "/assets/book.jpg");
+				return;
+			}
+			
+			// get output channel
+			WritableByteChannel output = Channels.newChannel(outputStream);
+			
+			// write
+			long length = ByteStreams.copy(coverChannel, output);
+			
+			// done
+			long size = Files.size(this.provider.getBookPath(bookId));
+			if(length < size) {
+				this.logger.warn("only wrote {} of {} bytes for the book cover @ id:{}", length, size, bookId);
+				response.sendRedirect(request.getContextPath() + "/assets/book.jpg");
+			}
+		} catch (IOException ex) {
+			this.logger.error("IO error while writing cover to servlet output: {}", ex.getLocalizedMessage());
+			throw ex;
+		} catch (Exception ex) {
+			this.logger.error("General error while writing cover to servlet output: {}", ex.getLocalizedMessage());
+			throw ex;
 		}
 		
 		return;

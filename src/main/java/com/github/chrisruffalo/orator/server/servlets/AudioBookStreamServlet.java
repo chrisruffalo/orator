@@ -428,21 +428,28 @@ public class AudioBookStreamServlet extends HttpServlet {
      * @throws IOException
      */
     private static long nioCopy(Path inputFile, OutputStream output, Range range) throws IOException {
+    	// no bytes written
+    	long written = 0;
+    	
     	// open file channel
-		FileChannel inputChannel = FileChannel.open(inputFile, StandardOpenOption.READ);
-		
-		// create writable channel from output stream
-		WritableByteChannel outputChannel = Channels.newChannel(output);
-		
-		//LoggerFactory.getLogger("nio-copy").info("writing {} to {} ({})", range.start, range.end, range.length);
-		
-		// transfer the start to end of the input channel to the output channel
-		long written = inputChannel.transferTo(range.start, range.length, outputChannel);
-		
-		//LoggerFactory.getLogger("nio-copy").info("wrote {}", written);
+		try  (FileChannel inputChannel = FileChannel.open(inputFile, StandardOpenOption.READ)) {
 
-		// close file
-		inputChannel.close();
+			// create writable channel from output stream
+			WritableByteChannel outputChannel = Channels.newChannel(output);
+			
+			//LoggerFactory.getLogger("nio-copy").info("writing {} to {} ({})", range.start, range.end, range.length);
+			
+			// transfer the start to end of the input channel to the output channel
+			written = inputChannel.transferTo(range.start, range.length, outputChannel);
+			
+			//LoggerFactory.getLogger("nio-copy").info("wrote {}", written);
+
+		} catch (IOException ex) {
+			// todo: warn
+			throw ex;
+		} catch (Exception ex) {
+			throw ex;
+		}
 		
 		// return written length
 		return written;
